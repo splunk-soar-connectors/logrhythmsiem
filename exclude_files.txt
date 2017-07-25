@@ -1,0 +1,4 @@
+logrhythmsiem_connector.py
+logrhythm_consts.py
+exclude_files.txt
+.git*
