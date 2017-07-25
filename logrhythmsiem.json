@@ -18,7 +18,7 @@
     "pip_dependencies": {
         "wheel": [
             {
-                "module": "suds", "input_file": "wheels/"
+                "module": "suds", "input_file": "wheels/suds-0.4-cp27-none-any.whl"
             }
         ]
     },
@@ -143,6 +143,12 @@
                     "column_order": 2
                 }, 
                 {
+                    "data_path": "action_result.parameter.pattern_match", 
+                    "data_type": "string", 
+                    "column_name": "event_id", 
+                    "column_order": 2
+                }, 
+                {
                     "data_path": "action_result.status", 
                     "data_type": "string", 
                     "column_name": "status", 
@@ -205,25 +211,20 @@
             }, 
             "output": [
                 {
-                    "data_path": "action_result.parameter.type", 
-                    "data_type": "string", 
-                    "contains": [], 
-                    "column_name": "type", 
-                    "column_order": 0
+                    "data_path": "action_result.parameter.max_events",
+                    "data_type": "string"
                 }, 
                 {
-                    "data_path": "action_result.parameter.query", 
-                    "data_type": "string", 
-                    "contains": [], 
-                    "column_name": "query", 
-                    "column_order": 1
+                    "data_path": "action_result.parameter.query_dict", 
+                    "data_type": "string"
                 }, 
                 {
-                    "data_path": "action_result.parameter.range", 
-                    "data_type": "string", 
-                    "contains": [], 
-                    "column_name": "range", 
-                    "column_order": 2
+                    "data_path": "action_result.parameter.from_date", 
+                    "data_type": "string"
+                }, 
+                {
+                    "data_path": "action_result.parameter.to_date",
+                    "data_type": "string"
                 }, 
                 {
                     "data_path": "action_result.status", 
