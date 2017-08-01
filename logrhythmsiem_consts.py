@@ -21,7 +21,7 @@ LOGRHYTHMSIEM_LOOKUP_SERVICE = "LookupServiceBasicAuth.svc?wsdl"
 
 LOGRHYTHMSIEM_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
-LOGRHYTHMSIEM_SERVICE_DICT = {"General": "AddGeneralListItem",
+LOGRHYTHMSIEM_LIST_SERVICE_DICT = {"General": "AddGeneralListItem",
                                         "Hostname": "AddHostListItemHostname",
                                         "IP": "AddHostListItemIPAddress",
                                         "IP Range": "AddHostListItemIPAddressRange",

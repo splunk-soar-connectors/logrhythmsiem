@@ -12,7 +12,7 @@
     "app_version": "1.0.0", 
     "utctime_updated": "2017-06-23T19:27:02.892841Z", 
     "package_name": "phantom_logrhythmsiem", 
-    "main_module": "logrhythmsiem_connector.py", 
+    "main_module": "logrhythmsiem_connector.pyc", 
     "min_phantom_version": "2.1.486", 
     "app_wizard_version": "1.0.0", 
     "pip_dependencies": {

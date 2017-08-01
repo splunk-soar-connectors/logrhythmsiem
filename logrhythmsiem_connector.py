@@ -169,6 +169,8 @@ class LogrhythmSiemConnector(BaseConnector):
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, 'SOAP call to LogRhythm failed', e), None)
 
+        print response
+
         return True, self._suds_to_dict(response)
 
     def _suds_to_dict(self, sud_obj):
@@ -256,12 +258,10 @@ class LogrhythmSiemConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, 'Given list type is not valid')
 
         # make soap call
-        ret_val, response = self._make_soap_call(action_result, consts.LOGRHYTHMSIEM_SERVICE_DICT[list_type], params)
+        ret_val, response = self._make_soap_call(action_result, consts.LOGRHYTHMSIEM_LIST_SERVICE_DICT[list_type], params)
 
         if (phantom.is_fail(ret_val)):
             return ret_val
-
-        action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -303,7 +303,7 @@ class LogrhythmSiemConnector(BaseConnector):
 
         for k, v in query_dict.iteritems():
 
-            if k not in consts.LOGRHYTHMSIEM_SERVICE_DICT:
+            if k not in consts.LOGRHYTHMSIEM_LIST_SERVICE_DICT:
                 return action_result.set_status(phantom.APP_ERROR, "One of the given query fields, {0}, is not valid.".format(k))
 
             value_arr = self._client.factory.create('ns1:ArrayOfstring')
@@ -409,7 +409,7 @@ class LogrhythmSiemConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.set_status(phantom.APP_ERROR, message)
 
-            ret_val, alarm_resp = self._make_soap_call(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE, 'GetAlarmEventsByID', (alarm_id,))
+            ret_val, alarm_resp = self._make_soap_call(action_result, 'GetAlarmEventsByID', (alarm_id,))
 
             if phantom.is_fail(ret_val):
                 return ret_val
@@ -452,7 +452,7 @@ class LogrhythmSiemConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_update_ticket(self, param):
+    def _handle_update_alarm(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -485,53 +485,6 @@ class LogrhythmSiemConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_get_ticket(self, param):
-
-        # Implement the handler here
-        # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
-
-        # Add an action result object to self (BaseConnector) to represent the action for this param
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        """
-        # Access action parameters passed in the 'param' dictionary
-
-        # Required values can be accessed directly
-        required_parameter = param['required_parameter']
-
-        # Optional values should use the .get() function
-        optional_parameter = param.get('optional_parameter', 'default_value')
-        """
-
-        """
-        # make rest call
-        ret_val, response = self._make_rest_call('/endpoint', action_result, params=None, headers=None)
-
-        if (phantom.is_fail(ret_val)):
-            # the call to the 3rd party device or service failed, action result should contain all the error details
-            # so just return from here
-            return action_result.get_status()
-
-        # Now post process the data,  uncomment code as you deem fit
-
-        # Add the response into the data section
-        # action_result.add_data(response)
-        """
-
-        action_result.add_data({})
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        summary = action_result.update_summary({})
-        summary['important_data'] = "value"
-
-        # Return success, no need to set the message, only the status
-        # BaseConnector will create a textual message based off of the summary dictionary
-        # return action_result.set_status(phantom.APP_SUCCESS)
-
-        # For now return Error with a message, in case of success we don't set the message, but use the summary
-        return action_result.set_status(phantom.APP_ERROR, "Action not yet implemented")
-
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -550,9 +503,7 @@ class LogrhythmSiemConnector(BaseConnector):
         elif action_id == 'on_poll':
             ret_val = self._handle_on_poll(param)
         elif action_id == 'update_alarm':
-            ret_val = self._handle_update_ticket(param)
-        elif action_id == 'get_ticket':
-            ret_val = self._handle_get_ticket(param)
+            ret_val = self._handle_update_alarm(param)
 
         return ret_val
 
