@@ -1,20 +1,20 @@
 {
-    "appid": "235e79d1-c56c-42ca-a860-c7f7ee07cc86", 
-    "name": "LogRhythm SIEM", 
-    "description": "This app supports ingestion and several investigative actions on LogRhythm SIEM", 
-    "type": "siem", 
-    "product_vendor": "LogRhythm", 
-    "logo": "logrhythmsiem.png", 
-    "product_name": "LogRhythm SIEM", 
-    "product_version_regex": ".*", 
-    "publisher": "Phantom", 
-    "license": "Copyright (c) Phantom Cyber Corporation 2017", 
-    "app_version": "1.0.0", 
-    "utctime_updated": "2017-06-23T19:27:02.892841Z", 
-    "package_name": "phantom_logrhythmsiem", 
-    "main_module": "logrhythmsiem_connector.pyc", 
-    "min_phantom_version": "2.1.486", 
-    "app_wizard_version": "1.0.0", 
+    "appid": "235e79d1-c56c-42ca-a860-c7f7ee07cc86",
+    "name": "LogRhythm SIEM",
+    "description": "This app supports ingestion and several investigative actions on LogRhythm SIEM",
+    "type": "siem",
+    "product_vendor": "LogRhythm",
+    "logo": "logrhythmsiem.png",
+    "product_name": "LogRhythm SIEM",
+    "product_version_regex": ".*",
+    "publisher": "Phantom",
+    "license": "Copyright (c) Phantom Cyber Corporation 2017",
+    "app_version": "1.0.0",
+    "utctime_updated": "2017-06-23T19:27:02.892841Z",
+    "package_name": "phantom_logrhythmsiem",
+    "main_module": "logrhythmsiem_connector.pyc",
+    "min_phantom_version": "2.1.486",
+    "app_wizard_version": "1.0.0",
     "pip_dependencies": {
         "wheel": [
             {
@@ -27,30 +27,26 @@
             "description": "IP of API endpoint",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 0
-        }, 
-        "ph": {
-            "data_type": "ph",
+        },
+        "windows_auth": {
+            "description": "Use Windows authentication",
+            "data_type": "boolean",
+            "required": true,
             "order": 1
         },
         "username": {
             "description": "Username",
             "data_type": "string",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 2
-        }, 
+        },
         "password": {
             "description": "Password",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 3
-        }, 
+        },
         "poll_now_ingestion_span": {
             "default": 15,
             "required": true,
@@ -72,26 +68,26 @@
             "description": "Maximum number of alarms to ingest for scheduled polling",
             "order": 6
         }
-    }, 
+    },
     "actions": [
         {
-            "action": "test connectivity", 
-            "identifier": "test_connectivity", 
-            "description": "Validate the asset configuration for connectivity using supplied configuration.", 
-            "verbose": "", 
-            "type": "test", 
-            "read_only": true, 
-            "parameters": {}, 
-            "output": [], 
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration.",
+            "verbose": "",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
             "versions": "EQ(*)"
-        }, 
+        },
         {
-            "action": "add to list", 
-            "identifier": "add_to_list", 
-            "description": "Add to a list", 
-            "verbose": "Due to a limitation in the LogRhythm API, this action only supports adding to <b>General</b>, <b>User</b>, and <b>Host</b> lists. To add to a <b>Host</b> list. Specify the type of host to add, either <b>Hostname</b>, <b>IP</b>, or <b>IP Range</b>.", 
-            "type": "generic", 
-            "read_only": false, 
+            "action": "add to list",
+            "identifier": "add_to_list",
+            "description": "Add to a list",
+            "verbose": "Due to a limitation in the LogRhythm API, this action only supports adding to <b>General</b>, <b>User</b>, and <b>Host</b> lists. To add to a <b>Host</b> list. Specify the type of host to add, either <b>Hostname</b>, <b>IP</b>, or <b>IP Range</b>.",
+            "type": "generic",
+            "read_only": false,
             "parameters": {
                 "id": {
                     "description": "List ID",
@@ -100,7 +96,7 @@
                     "primary": true,
                     "contains": [ "logrhythm list id" ],
                     "order": 0
-                }, 
+                },
                 "type": {
                     "description": "Type of list",
                     "data_type": "string",
@@ -121,57 +117,57 @@
                     "required": true,
                     "order": 3
                 }
-            }, 
+            },
             "output": [
                 {
-                    "data_path": "action_result.parameter.id", 
-                    "data_type": "string", 
-                    "contains": [ "logrhythm list id" ], 
-                    "column_name": "title", 
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "string",
+                    "contains": [ "logrhythm list id" ],
+                    "column_name": "title",
                     "column_order": 0
-                }, 
+                },
                 {
-                    "data_path": "action_result.parameter.element", 
-                    "data_type": "string", 
-                    "column_name": "description", 
+                    "data_path": "action_result.parameter.element",
+                    "data_type": "string",
+                    "column_name": "description",
                     "column_order": 1
-                }, 
+                },
                 {
-                    "data_path": "action_result.parameter.type", 
-                    "data_type": "string", 
-                    "column_name": "event_id", 
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string",
+                    "column_name": "event_id",
                     "column_order": 2
-                }, 
+                },
                 {
-                    "data_path": "action_result.parameter.pattern_match", 
-                    "data_type": "string", 
-                    "column_name": "event_id", 
+                    "data_path": "action_result.parameter.pattern_match",
+                    "data_type": "string",
+                    "column_name": "event_id",
                     "column_order": 2
-                }, 
+                },
                 {
-                    "data_path": "action_result.status", 
-                    "data_type": "string", 
-                    "column_name": "status", 
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
                     "column_order": 3
-                }, 
+                },
                 {
-                    "data_path": "action_result.message", 
+                    "data_path": "action_result.message",
                     "data_type": "string"
-                }, 
+                },
                 {
-                    "data_path": "summary.total_objects", 
+                    "data_path": "summary.total_objects",
                     "data_type": "numeric"
-                }, 
+                },
                 {
-                    "data_path": "summary.total_objects_successful", 
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
-            ], 
+            ],
             "render": {
                 "type": "table"
-            }, 
+            },
             "versions": "EQ(*)"
-        }, 
+        },
         {
             "action": "run query",
             "identifier": "run_query",
@@ -186,7 +182,7 @@
                     "required": true,
                     "primary": false,
                     "order": 0
-                }, 
+                },
                 "to_date": {
                     "description": "End Date (YYYY-MM-DDThh:mm:ss)",
                     "data_type": "string",
@@ -208,87 +204,765 @@
                     "primary": false,
                     "order": 2
                 }
-            }, 
+            },
             "output": [
                 {
-                    "data_path": "action_result.parameter.max_events",
-                    "data_type": "string"
-                }, 
+                    "data_path": "action_result.data.*.LogDataModel.*.Bytes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
                 {
-                    "data_path": "action_result.parameter.query_dict", 
-                    "data_type": "string"
-                }, 
+                    "data_path": "action_result.data.*.LogDataModel.*.Count",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
                 {
-                    "data_path": "action_result.parameter.from_date", 
-                    "data_type": "string"
-                }, 
+                    "data_path": "action_result.data.*.LogDataModel.*.LogDate",
+                    "data_type": "string",
+                    "column_name": "Date",
+                    "column_order": 2,
+                    "example_values": [
+                        "2017-07-27T13:12:48.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.EntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.Priority",
+                    "data_type": "numeric",
+                    "column_name": "Priority",
+                    "column_order": 3,
+                    "example_values": [
+                        16
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.Direction",
+                    "data_type": "string",
+                    "example_values": [
+                        "Local"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.MPERuleID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000826
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.MessageID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        74626
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ProcessID",
+                    "data_type": "numeric",
+                    "contains": [ "pid" ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ServiceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000006
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.EntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogMessage",
+                    "data_type": "string",
+                    "example_values": [
+                        "<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='LogRhythm Job Manager'/><EventID Qualifiers='0'>6001</EventID><Level>Information</Level><Task>None</Task><Keywords>Classic</Keywords><TimeCreated SystemTime='2017-07-27T20:12:48.000000000Z'/><EventRecordID>260983</EventRecordID><Channel>Application</Channel><Computer>logr-siem-01.lab.phantom.local</Computer><Security/></System><EventData>[AD Sync] Active Directory synchronization started.</EventData></Event>"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.NormalDate",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-07-27T20:12:48.000007"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginName",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginPort",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ProtocolID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.MPERuleName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm Job Manager Event 6001"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.MessageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "Event"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ServiceName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm Job Manager"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.VendorMsgID",
+                    "data_type": "string",
+                    "example_values": [
+                        "6001"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.DateInserted",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-07-27T20:13:04.000137"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedName",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedPort",
+                    "data_type": "numeric",
+                    "contains": [ "port" ],
+                    "example_values": [
+                        443
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.CommonEventID",
+                    "data_type": "numeric",
+                    "column_name": "Event ID",
+                    "column_order": 0,
+                    "example_values": [
+                        -1000466
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.DirectionName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Local"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceHost",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01 *"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceType",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.NormalDateMax",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-07-27T20:12:48.000007"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginNATPort",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginEntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "City"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.HasCity",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.IsValid",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.CityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Palo Alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.FullName",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States, California, Palo Alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.Latitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        37.41667175292969
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.HasRegion",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.Longitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -122.1666717529297
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.HasCountry",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.HasLatLong",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.LocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        17431
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.RegionName",
+                    "data_type": "string",
+                    "example_values": [
+                        "California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.CountryName",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.LocationKey",
+                    "data_type": "string",
+                    "example_values": [
+                        "USCA:palo alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.FullNameRegion",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States, California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.ParentLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        252
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocation.HasParentLocation",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginZoneName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Internal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.SequenceNumber",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.CommonEventName",
+                    "data_type": "string",
+                    "column_name": "Event Name",
+                    "column_order": 1,
+                    "example_values": [
+                        "LogRhythm JobMgr AD Synch Started"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedNATPort",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginNetworkID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ClassificationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3400
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedEntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.Type",
+                    "data_type": "string",
+                    "example_values": [
+                        "City"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.HasCity",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.IsValid",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.CityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Palo Alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.FullName",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States, California, Palo Alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.Latitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        37.41667175292969
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.HasRegion",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.Longitude",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -122.1666717529297
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.HasCountry",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.HasLatLong",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.LocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        17431
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.RegionName",
+                    "data_type": "string",
+                    "example_values": [
+                        "California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.CountryName",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.LocationKey",
+                    "data_type": "string",
+                    "example_values": [
+                        "USCA:palo alto"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.FullNameRegion",
+                    "data_type": "string",
+                    "example_values": [
+                        "United States, California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.ParentLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        252
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocation.HasParentLocation",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedZoneName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Internal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginEntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.OriginLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        17431
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedNetworkID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.LogSourceTypeName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm Diagnostics"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ClassificationName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Information"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedEntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LogDataModel.*.ImpactedLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        17431
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Important data: value"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string",
+                    "example_values": [
+                        "value"
+                    ]
+                },
                 {
                     "data_path": "action_result.parameter.to_date",
-                    "data_type": "string"
-                }, 
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-08-01T23:59:59"
+                    ]
+                },
                 {
-                    "data_path": "action_result.status", 
-                    "data_type": "string", 
-                    "column_name": "status", 
-                    "column_order": 3
-                }, 
+                    "data_path": "action_result.parameter.from_date",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-01-01T00:00:00"
+                    ]
+                },
                 {
-                    "data_path": "action_result.message", 
-                    "data_type": "string"
-                }, 
+                    "data_path": "action_result.parameter.max_events",
+                    "data_type": "string",
+                    "example_values": [
+                        "10"
+                    ]
+                },
                 {
-                    "data_path": "summary.total_objects", 
-                    "data_type": "numeric"
-                }, 
+                    "data_path": "action_result.parameter.query_dict",
+                    "data_type": "string",
+                    "example_values": [
+                        "{\"Priority\":\"16\"}"
+                    ]
+                },
                 {
-                    "data_path": "summary.total_objects_successful", 
-                    "data_type": "numeric"
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 }
-            ], 
+            ],
             "render": {
                 "type": "table"
-            }, 
+            },
             "versions": "EQ(*)"
-        }, 
+        },
         {
-            "action": "on poll", 
-            "identifier": "on_poll", 
-            "description": "Callback action for the on_poll ingest functionality.", 
-            "verbose": "", 
-            "type": "ingest", 
-            "read_only": true, 
+            "action": "on poll",
+            "identifier": "on_poll",
+            "description": "Callback action for the on_poll ingest functionality.",
+            "verbose": "",
+            "type": "ingest",
+            "read_only": true,
             "parameters": {
                 "container_id": {
                     "description": "Parameter ignored in this app",
                     "data_type": "numeric"
-                }, 
+                },
                 "start_time": {
                     "description": "Parameter ignored in this app",
                     "data_type": "numeric"
-                }, 
+                },
                 "end_time": {
                     "description": "Parameter ignored in this app",
                     "data_type": "numeric"
-                }, 
+                },
                 "container_count": {
-                    "description": "Maximum number of container records to query for.", 
+                    "description": "Maximum number of container records to query for.",
                     "data_type": "numeric"
-                }, 
+                },
                 "artifact_count": {
                     "description": "Parameter ignored in this app",
                     "data_type": "numeric"
                 }
-            }, 
-            "output": [], 
+            },
+            "output": [],
             "versions": "EQ(*)"
-        }, 
+        },
         {
-            "action": "update alarm", 
-            "identifier": "update_alarm", 
-            "description": "Update an alarm", 
-            "verbose": "", 
-            "type": "generic", 
-            "read_only": false, 
+            "action": "update alarm",
+            "identifier": "update_alarm",
+            "description": "Update an alarm",
+            "verbose": "",
+            "type": "generic",
+            "read_only": true,
             "parameters": {
                 "id": {
                     "description": "Alarm ID",
@@ -297,7 +971,7 @@
                     "primary": true,
                     "contains": [ "logrhythm alarm id" ],
                     "order": 0
-                }, 
+                },
                 "status": {
                     "description": "New status for the alarm",
                     "data_type": "string",
@@ -313,38 +987,696 @@
                     "primary": false,
                     "order": 2
                 }
-            }, 
+            },
             "output": [
                 {
-                    "data_path": "action_result.parameter.id", 
+                    "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [ "logrhythm alarm id" ]
-                }, 
+                },
                 {
-                    "data_path": "action_result.parameter.status", 
+                    "data_path": "action_result.parameter.status",
                     "data_type": "string"
-                }, 
+                },
                 {
-                    "data_path": "action_result.parameter.comment", 
+                    "data_path": "action_result.parameter.comment",
                     "data_type": "string"
-                }, 
+                },
                 {
-                    "data_path": "action_result.status", 
+                    "data_path": "action_result.status",
                     "data_type": "string"
-                }, 
+                },
                 {
-                    "data_path": "action_result.message", 
+                    "data_path": "action_result.message",
                     "data_type": "string"
-                }, 
+                },
                 {
-                    "data_path": "summary.total_objects", 
+                    "data_path": "summary.total_objects",
                     "data_type": "numeric"
-                }, 
+                },
                 {
-                    "data_path": "summary.total_objects_successful", 
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
-            ], 
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get alarm",
+            "identifier": "get_alarm",
+            "description": "Get an alarm",
+            "type": "investigate",
+            "read_only": false,
+            "parameters": {
+                "id": {
+                    "description": "Alarm ID",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [ "logrhythm alarm id" ]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.RBPAvg",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.RBPMax",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        194
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.EntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmDate",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000066"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.EntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.EventCount",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmRuleID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        677
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmStatus",
+                    "data_type": "string",
+                    "example_values": [
+                        "Opened"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.DateUpdated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-08-03T19:45:54.000055"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.DateInserted",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000837"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmRuleName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm AI Comm Manager Heartbeat Missed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.EventDateLast",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LastUpdatedID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        14
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.EventDateFirst",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.LastUpdatedName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Soap API User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "194"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get events",
+            "identifier": "get_events",
+            "description": "Get an alarm's events",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "id": {
+                    "description": "Alarm ID",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [ "logrhythm alarm id" ]
+                }
+            },
+            "render": {
+                "type": "table"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.ID",
+                    "data_type": "numeric",
+                    "contains": [ "logrhythm alarm id" ],
+                    "example_values": [
+                        194
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Bytes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Count",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogDate",
+                    "data_type": "string",
+                    "column_name": "Log Date",
+                    "column_order": 1,
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.EntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Direction",
+                    "data_type": "string",
+                    "example_values": [
+                        "Local"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MPERuleID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProcessID",
+                    "data_type": "numeric",
+                    "contains": [ "pid" ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ServiceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.NormalDate",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginName",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginPort",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProtocolID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "Event"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedName",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedPort",
+                    "data_type": "numeric",
+                    "contains": [ "port" ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1100403
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.DirectionName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Local"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHost",
+                    "data_type": "string",
+                    "example_values": [
+                        "logr-siem-01 *"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceType",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.NormalDateMax",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATPort",
+                    "data_type": "numeric",
+                    "contains": [ "port" ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZoneName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Internal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.SequenceNumber",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventName",
+                    "data_type": "string",
+                    "column_name": "Event Name",
+                    "column_order": 0,
+                    "example_values": [
+                        "LogRhythm AI Comm Manager Heartbeat Missed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATPort",
+                    "data_type": "numeric",
+                    "contains": [ "port" ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNetworkID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedZoneName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Internal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNetworkID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostName",
+                    "data_type": "string",
+                    "contains": [ "host name" ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceTypeName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm Diagnostics"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Error"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedLocationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "string",
+                    "contains": [ "logrhythm alarm id" ],
+                    "example_values": [
+                        "194"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list log managers",
+            "identifier": "list_log_managers",
+            "description": "List all log managers on the system",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+            },
+            "render": {
+                "type": "table"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.List.KeyValuePairOfintstring.*.key",
+                    "data_type": "numeric",
+                    "column_name": "Log Manager ID",
+                    "column_order": 0,
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.List.KeyValuePairOfintstring.*.value",
+                    "data_type": "string",
+                    "column_name": "Log Manager Name",
+                    "column_order": 1,
+                    "example_values": [
+                        "LOGR-SIEM-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.HasMoreResults",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
             "versions": "EQ(*)"
         }
     ]
