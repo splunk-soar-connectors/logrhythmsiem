@@ -277,7 +277,7 @@ class LogrhythmSiemConnector(BaseConnector):
             value_obj.Value = value_arr
 
             filter_obj = self._client.factory.create('LogQueryFilterDataModel')
-            filter_obj.FilterType = k
+            filter_obj.FilterType = consts.LOGRHYTHMSIEM_SERVICE_DICT[k.lower()]
             filter_obj.FilterMode = 'FilterIn'
             filter_obj.FilterOperator = 'And'
             filter_obj.FilterValues = value_obj
