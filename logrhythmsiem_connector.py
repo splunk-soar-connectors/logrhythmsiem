@@ -20,49 +20,17 @@ from phantom.action_result import ActionResult
 import logrhythmsiem_consts as consts
 
 import json
-# import urllib2
 from datetime import datetime
 from datetime import timedelta
 from suds.client import Client
 from suds.sudsobject import asdict
 from suds.wsse import UsernameToken, Security
-import suds.transport.https
-import suds.transport.http
-from urllib2_kerberos import HTTPKerberosAuthHandler
 from suds.transport.https import WindowsHttpAuthenticated
-
-# from ntlm import ntlm
-# import logging
-# logging.basicConfig(level=logging.INFO)
-# logging.getLogger('suds.client').setLevel(logging.DEBUG)
-# logging.getLogger('suds.transport').setLevel(logging.DEBUG) # MUST BE THIS?
-# logging.getLogger('suds.xsd.schema').setLevel(logging.DEBUG)
-# logging.getLogger('suds.wsdl').setLevel(logging.DEBUG)
-# logging.getLogger('suds.resolver').setLevel(logging.DEBUG)
-# logging.getLogger('suds.xsd.query').setLevel(logging.DEBUG)
-# logging.getLogger('suds.xsd.basic').setLevel(logging.DEBUG)
-# logging.getLogger('suds.binding.marshaller').setLevel(logging.DEBUG)
 
 
 class RetVal(tuple):
     def __new__(cls, val1, val2):
         return tuple.__new__(RetVal, (val1, val2))
-
-
-class KerberosHttpAuthenticated(suds.transport.https.HttpAuthenticated):
-    """
-    Provides Kerberos http authentication.
-    """
-
-    def __init__(self, as_user=None, spn=None):
-        self.as_user = as_user
-        self.spn = spn
-        suds.transport.https.HttpAuthenticated.__init__(self)
-
-    def u2handlers(self):
-        handlers = suds.transport.http.HttpTransport.u2handlers(self)
-        handlers.append(HTTPKerberosAuthHandler())  # self.as_user, self.spn))
-        return handlers
 
 
 class LogrhythmSiemConnector(BaseConnector):
@@ -107,11 +75,7 @@ class LogrhythmSiemConnector(BaseConnector):
         try:
             if self._is_windows_auth:
                 transport = WindowsHttpAuthenticated(username=self._username, password=self._password)
-                # transport = KerberosHttpAuthenticated(as_user=True, spn=self._username)
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=transport)
-                # ntlmauth = 'NTLM %s' % ntlm.create_NTLM_NEGOTIATE_MESSAGE(self._username).decode('ascii')
-                # header = {'Authorization': ntlmauth}
-                # self._client.set_options(headers=header)
             else:
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl))
                 sec = Security()
@@ -307,11 +271,10 @@ class LogrhythmSiemConnector(BaseConnector):
             # so just return from here
             return action_result.get_status()
 
-        action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        summary = action_result.update_summary({})
-        summary['important_data'] = "value"
+        if response:
+            action_result.add_data(response)
+            summary = {'num_events': len(response['LogDataModel'])}
+            action_result.update_summary(summary)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -466,7 +429,10 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        action_result.add_data(response)
+        if response:
+            action_result.add_data(response)
+            summary = {'num_events': len(response['LogDataModel'])}
+            action_result.update_summary(summary)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 

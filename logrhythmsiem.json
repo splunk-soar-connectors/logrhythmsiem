@@ -1167,6 +1167,7 @@
                 {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
+                    "contains": [ "logrhythm alarm id" ],
                     "example_values": [
                         "194"
                     ]
