@@ -19,18 +19,29 @@ from phantom.action_result import ActionResult
 
 import logrhythmsiem_consts as consts
 
+import ssl
 import json
 from datetime import datetime
 from datetime import timedelta
 from suds.client import Client
 from suds.sudsobject import asdict
 from suds.wsse import UsernameToken, Security
+from suds.transport.https import HttpAuthenticated
 from suds.transport.https import WindowsHttpAuthenticated
+from urllib2 import HTTPSHandler
 
 
 class RetVal(tuple):
     def __new__(cls, val1, val2):
         return tuple.__new__(RetVal, (val1, val2))
+
+
+class NoVerifyTransport(HttpAuthenticated):
+    def u2handlers(self):
+        handlers = HttpAuthenticated.u2handlers(self)
+        context = ssl._create_unverified_context()
+        handlers.append(HTTPSHandler(context=context))
+        return handlers
 
 
 class LogrhythmSiemConnector(BaseConnector):
@@ -77,7 +88,7 @@ class LogrhythmSiemConnector(BaseConnector):
                 transport = WindowsHttpAuthenticated(username=self._username, password=self._password)
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=transport)
             else:
-                self._client = Client(url='{0}{1}'.format(self._base_url, wsdl))
+                self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=NoVerifyTransport())
                 sec = Security()
                 sec.tokens.append(UsernameToken(self._username, self._password))
                 self._client.set_options(wsse=sec)
@@ -140,7 +151,6 @@ class LogrhythmSiemConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
-        # self.save_progress("Connecting to endpoint")
         # make rest call
         ret_val, response = self._make_soap_call(action_result, 'GetClassifications')
 
@@ -299,7 +309,7 @@ class LogrhythmSiemConnector(BaseConnector):
         elif self._state.get('first_run', True):
             self._state['first_run'] = False
             max_alarms = config['max_alarms']
-            start_time = (datetime.utcnow() - timedelta(days=int(config['poll_now_ingestion_span']))).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
+            start_time = (datetime.utcnow() - timedelta(days=int(config['first_scheduled_ingestion_span']))).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
             self._state['last_time'] = datetime.utcnow().strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
         else:
             max_alarms = config['max_alarms']
@@ -431,7 +441,7 @@ class LogrhythmSiemConnector(BaseConnector):
 
         if response:
             action_result.add_data(response)
-            summary = {'num_events': len(response['LogDataModel'])}
+            summary = {'num_events': response['EventCount']}
             action_result.update_summary(summary)
 
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -457,7 +467,10 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        action_result.add_data(response)
+        if response:
+            action_result.add_data(response)
+            summary = {'num_events': len(response['Events']['LogDataModel'])}
+            action_result.update_summary(summary)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -479,7 +492,10 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        action_result.add_data(response)
+        if response:
+            action_result.add_data(response)
+            summary = {'num_managers': len(response['List']['KeyValuePairOfintstring'])}
+            action_result.update_summary(summary)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 

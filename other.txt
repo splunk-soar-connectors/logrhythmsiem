@@ -1,0 +1,1 @@
+curl -u 'LOGR-SIEMAPI-01\\user1-soapapi':'phantom' --ntlm -X POST -H 'Content-Type: text/xml' -H 'SOAPAction: "http://www.logrhythm.com/webservices/LookupService/GetClassifications"' "https://10.16.0.64/LogRhythm.API/Services/LookupServiceWindowsAuth.svc" --data-binary @soapenvelope.xml

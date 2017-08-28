@@ -4,7 +4,7 @@
     "description": "This app supports ingestion and several investigative actions on LogRhythm SIEM",
     "type": "siem",
     "product_vendor": "LogRhythm",
-    "logo": "logrhythmsiem.png",
+    "logo": "logrhythm.png",
     "product_name": "LogRhythm SIEM",
     "product_version_regex": ".*",
     "publisher": "Phantom",
@@ -962,7 +962,7 @@
             "description": "Update an alarm",
             "verbose": "",
             "type": "generic",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "id": {
                     "description": "Alarm ID",
@@ -1026,7 +1026,7 @@
             "identifier": "get_alarm",
             "description": "Get an alarm",
             "type": "investigate",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "id": {
                     "description": "Alarm ID",
@@ -1035,6 +1035,9 @@
                     "primary": true,
                     "contains": [ "logrhythm alarm id" ]
                 }
+            },
+            "render": {
+                "type": "table"
             },
             "output": [
                 {
@@ -1054,6 +1057,8 @@
                 {
                     "data_path": "action_result.data.*.AlarmID",
                     "data_type": "numeric",
+                    "column_name": "Alarm ID",
+                    "column_order": 0,
                     "example_values": [
                         194
                     ]
@@ -1068,6 +1073,8 @@
                 {
                     "data_path": "action_result.data.*.AlarmDate",
                     "data_type": "string",
+                    "column_name": "Alarm Date",
+                    "column_order": 2,
                     "example_values": [
                         "2017-06-29T03:50:11.000066"
                     ]
@@ -1082,6 +1089,8 @@
                 {
                     "data_path": "action_result.data.*.EventCount",
                     "data_type": "numeric",
+                    "column_name": "Event Count",
+                    "column_order": 3,
                     "example_values": [
                         1
                     ]
@@ -1117,6 +1126,8 @@
                 {
                     "data_path": "action_result.data.*.AlarmRuleName",
                     "data_type": "string",
+                    "column_name": "Alarm Rule ID",
+                    "column_order": 1,
                     "example_values": [
                         "LogRhythm AI Comm Manager Heartbeat Missed"
                     ]
