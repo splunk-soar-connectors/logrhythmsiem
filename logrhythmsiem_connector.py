@@ -27,7 +27,6 @@ from suds.client import Client
 from suds.sudsobject import asdict
 from suds.wsse import UsernameToken, Security
 from suds.transport.https import HttpAuthenticated
-from suds.transport.https import WindowsHttpAuthenticated
 from urllib2 import HTTPSHandler
 
 
@@ -48,7 +47,6 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def __init__(self):
 
-        # Call the BaseConnectors init first
         super(LogrhythmSiemConnector, self).__init__()
 
         self._state = None
@@ -56,42 +54,36 @@ class LogrhythmSiemConnector(BaseConnector):
         self._base_url = None
         self._username = None
         self._password = None
-        self._is_windows_auth = None
+        self._verify = None
 
     def initialize(self):
 
-        # Load the state in initialize, use it to store data
-        # that needs to be accessed across actions
         self._state = self.load_state()
 
-        # get the asset config
         config = self.get_config()
 
-        # Access values in asset config by the name
         self._username = config['username']
         self._password = config['password']
-        self._is_windows_auth = config['windows_auth']
+        self._verify = config['verify_server_cert']
         self._base_url = 'https://{0}/LogRhythm.API/Services/'.format(config['api_ip'])
 
         return phantom.APP_SUCCESS
 
     def finalize(self):
 
-        # Save the state, this data is saved accross actions and app upgrades
         self.save_state(self._state)
         return phantom.APP_SUCCESS
 
     def _create_client(self, action_result, wsdl):
 
         try:
-            if self._is_windows_auth:
-                transport = WindowsHttpAuthenticated(username=self._username, password=self._password)
-                self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=transport)
+            if self._verify:
+                self._client = Client(url='{0}{1}'.format(self._base_url, wsdl))
             else:
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=NoVerifyTransport())
-                sec = Security()
-                sec.tokens.append(UsernameToken(self._username, self._password))
-                self._client.set_options(wsse=sec)
+            sec = Security()
+            sec.tokens.append(UsernameToken(self._username, self._password))
+            self._client.set_options(wsse=sec)
         except Exception as e:
             return action_result.set_status(phantom.APP_ERROR, 'Could not connect to the LogRhythm API endpoint', e)
 
@@ -130,7 +122,7 @@ class LogrhythmSiemConnector(BaseConnector):
             return new_list
 
         elif isinstance(sud_obj, datetime):
-            # Sometimes an event's DateInserted field can be '0001-01-01 00:00:00', which causes a ValueError strftime()
+            # Sometimes an event's DateInserted field can be '0001-01-01 00:00:00', which causes a ValueError in strftime()
             try:
                 return sud_obj.strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
             except ValueError:
@@ -144,36 +136,29 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def _handle_test_connectivity(self, param):
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOOKUP_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOOKUP_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
-        # make rest call
         ret_val, response = self._make_soap_call(action_result, 'GetClassifications')
 
         if (phantom.is_fail(ret_val)):
-            # the call to the 3rd party device or service failed, action result should contain all the error details
-            # so just return from here
             self.save_progress("Test Connectivity Failed. Error: {0}".format(action_result.get_message()))
             return action_result.get_status()
 
-        # Return success
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_add_to_list(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         self.debug_print(param)
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LIST_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LIST_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -194,23 +179,19 @@ class LogrhythmSiemConnector(BaseConnector):
         else:
             return action_result.set_status(phantom.APP_ERROR, 'Given list type is not valid')
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, consts.LOGRHYTHMSIEM_LIST_SERVICE_DICT[list_type], params)
 
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully added to list")
 
     def _handle_run_query(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
-
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOG_QUERY_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOG_QUERY_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -230,6 +211,7 @@ class LogrhythmSiemConnector(BaseConnector):
         filter_obj.FilterMode = 'FilterIn'
         filter_obj.FilterOperator = 'And'
         filter_obj.FilterValues = value_obj
+        filter_obj.IncludeNullValues = False
 
         filters = [filter_obj]
 
@@ -240,21 +222,94 @@ class LogrhythmSiemConnector(BaseConnector):
 
         for k, v in query_dict.iteritems():
 
-            if k.lower() not in consts.LOGRHYTHMSIEM_SERVICE_DICT:
+            if k.lower() not in consts.LOGRHYTHMSIEM_FILTER_DICT:
                 return action_result.set_status(phantom.APP_ERROR, "One of the given query fields, {0}, is not valid.".format(k))
 
-            value_arr = self._client.factory.create('ns1:ArrayOfstring')
-            value_arr.string = [v]
+            value_type = consts.LOGRHYTHMSIEM_VALUE_TYPE_DICT[k.lower()]
 
-            value_obj = self._client.factory.create('LogQueryFilterValueStringDataModel')
-            value_obj.ValueType = 'String'
+            if value_type == 'string':
+                value_obj = self._client.factory.create('LogQueryFilterValueStringDataModel')
+                value_obj.ValueType = 'String'
+                value_arr = self._client.factory.create('ns1:ArrayOfstring')
+                value_arr.string = [v]
+
+            elif value_type == 'integer' or (value_type == 'port' and ',' in v):
+                value_obj = self._client.factory.create('LogQueryFilterValueIntegerDataModel')
+                value_obj.ValueType = 'Integer'
+                value_arr = self._client.factory.create('ns1:ArrayOfint')
+                value_arr.int = [v]
+
+            elif value_type == 'long':
+                value_obj = self._client.factory.create('LogQueryFilterValueBigIntegerDataModel')
+                value_obj.ValueType = 'LongInteger'
+                value_arr = self._client.factory.create('ns1:ArrayOflong')
+                value_arr.long = [v]
+
+            elif value_type == 'quantity':
+
+                value_obj = self._client.factory.create('LogQueryFilterValueQuantityDataModel')
+                value_obj.ValueType = 'Quantity'
+                quantity = self._client.factory.create('LogQueryQuantityValue')
+
+                if ',' in v:
+                    v_spl = v.split(',')
+                    quantity.Value1 = v_spl[0]
+                    quantity.Value2 = v_spl[1]
+                    quantity.Operation = 'BetweenOrEqual'
+
+                else:
+                    quantity.Value1 = v
+                    quantity.Operation = 'Equals'
+
+                value_arr = self._client.factory.create('ArrayOfLogQueryQuantityValue')
+                value_arr.LogQueryQuantityValue = [quantity]
+
+            elif value_type == 'ip':
+
+                if ',' in v:
+
+                    v_spl = v.split(',')
+                    ip_range = self._client.factory.create('LogQueryIPRangeValue')
+                    ip_range.StartRangeValue = v_spl[0]
+                    ip_range.EndRangeValue = v_spl[1]
+
+                    value_obj = self._client.factory.create('LogQueryFilterValueIPRangeDataModel')
+                    value_obj.ValueType = 'IPAddressRange'
+
+                    value_arr = self._client.factory.create('ArrayOfLogQueryIPRangeValue')
+                    value_arr.LogQueryIPRangeValue = [ip_range]
+
+                else:
+                    value_obj = self._client.factory.create('LogQueryFilterValueIPAddressDataModel')
+                    value_obj.ValueType = 'IPAddress'
+                    value_arr = self._client.factory.create('ns1:ArrayOfstring')
+                    value_arr.string = [v]
+
+            elif value_type == 'port':
+
+                v_spl = v.split(',')
+                port_range = self._client.factory.create('LogQueryPortRangeValue')
+                port_range.StartRangeValue = v_spl[0]
+                port_range.EndRangeValue = v_spl[1]
+                port_range.CanEqual = True
+
+                value_obj = self._client.factory.create('LogQueryFilterValuePortRangeDataModel')
+                value_obj.ValueType = 'PortRange'
+
+                value_arr = self._client.factory.create('ArrayOfLogQueryPortRangeValue')
+                value_arr.LogQueryPortRangeValue = [port_range]
+
+            else:
+                return action_result.set_status(phantom.APP_ERROR, "Could not find correct value type for query field, {0}".format(k))
+
             value_obj.Value = value_arr
 
             filter_obj = self._client.factory.create('LogQueryFilterDataModel')
-            filter_obj.FilterType = consts.LOGRHYTHMSIEM_SERVICE_DICT[k.lower()]
+            filter_obj.FilterType = consts.LOGRHYTHMSIEM_FILTER_DICT[k.lower()]
             filter_obj.FilterMode = 'FilterIn'
             filter_obj.FilterOperator = 'And'
             filter_obj.FilterValues = value_obj
+            filter_obj.IncludeNullValues = False
 
             filters.append(filter_obj)
 
@@ -271,14 +326,9 @@ class LogrhythmSiemConnector(BaseConnector):
         query_obj.logSourceIDs = None
         query_obj.PrimaryFilter = filter_arr
 
-        print query_obj
-
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'ExecuteQuery', (query_obj,))
 
         if (phantom.is_fail(ret_val)):
-            # the call to the 3rd party device or service failed, action result should contain all the error details
-            # so just return from here
             return action_result.get_status()
 
         if response:
@@ -290,16 +340,13 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def _handle_on_poll(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         self.debug_print(param)
-
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         config = self.get_config()
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -318,7 +365,6 @@ class LogrhythmSiemConnector(BaseConnector):
 
         end_time = datetime.utcnow().strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'GetFirstPageAlarms', (start_time, end_time, True, max_alarms))
 
         if phantom.is_fail(ret_val):
@@ -389,14 +435,12 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def _handle_update_alarm(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         self.debug_print(param)
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -410,30 +454,26 @@ class LogrhythmSiemConnector(BaseConnector):
         if status == 'Open':
             status = 'Opened'
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'UpdateAlarmStatus', (alarm_id, status, comment))
 
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully updated alarm")
 
     def _handle_get_alarm(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         self.debug_print(param)
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
         alarm_id = param['id']
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'GetAlarmByID', (alarm_id,))
 
         if (phantom.is_fail(ret_val)):
@@ -448,20 +488,17 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def _handle_get_events(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         self.debug_print(param)
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_ALARM_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
         alarm_id = param['id']
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'GetAlarmEventsByID', (alarm_id, False))
 
         if (phantom.is_fail(ret_val)):
@@ -476,17 +513,14 @@ class LogrhythmSiemConnector(BaseConnector):
 
     def _handle_list_log_managers(self, param):
 
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOOKUP_SERVICE.format('Windows' if self._is_windows_auth else 'Basic'))
+        ret_val = self._create_client(action_result, consts.LOGRHYTHMSIEM_LOOKUP_SERVICE)
         if phantom.is_fail(ret_val):
             return ret_val
 
-        # make soap call
         ret_val, response = self._make_soap_call(action_result, 'GetLogManagers', ())
 
         if (phantom.is_fail(ret_val)):
@@ -531,8 +565,8 @@ class LogrhythmSiemConnector(BaseConnector):
 if __name__ == '__main__':
 
     import sys
-    # import pudb
-    # pudb.set_trace()
+    import pudb
+    pudb.set_trace()
 
     if (len(sys.argv) < 2):
         print "No test json specified as input"
