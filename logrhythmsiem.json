@@ -33,6 +33,7 @@
             "description": "Verify server certificate",
             "data_type": "boolean",
             "required": true,
+            "default": false,
             "order": 1
         },
         "username": {
@@ -82,7 +83,7 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "add to list",
+            "action": "add listitem",
             "identifier": "add_to_list",
             "description": "Add to a list",
             "verbose": "Due to a limitation in the LogRhythm API, this action only supports adding to <b>General</b>, <b>User</b>, and <b>Host</b> lists. To add to a <b>Host</b> list. Specify the type of host to add, either <b>Hostname</b>, <b>IP</b>, or <b>IP Range</b>.",
@@ -883,7 +884,7 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "list log managers",
+            "action": "list managers",
             "identifier": "list_log_managers",
             "description": "List all log managers on the system",
             "type": "investigate",
