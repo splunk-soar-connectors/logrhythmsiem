@@ -13,7 +13,7 @@
     "utctime_updated": "2017-06-23T19:27:02.892841Z",
     "package_name": "phantom_logrhythmsiem",
     "main_module": "logrhythmsiem_connector.pyc",
-    "min_phantom_version": "2.1.486",
+    "min_phantom_version": "3.0.251",
     "app_wizard_version": "1.0.0",
     "pip_dependencies": {
         "wheel": [
@@ -73,7 +73,7 @@
         {
             "action": "test connectivity",
             "identifier": "test_connectivity",
-            "description": "Validate the asset configuration for connectivity using supplied configuration.",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
             "verbose": "",
             "type": "test",
             "read_only": true,
@@ -171,7 +171,7 @@
         {
             "action": "on poll",
             "identifier": "on_poll",
-            "description": "Callback action for the on_poll ingest functionality.",
+            "description": "Ingest alarms from LogRhythm",
             "verbose": "",
             "type": "ingest",
             "read_only": true,
@@ -305,6 +305,9 @@
                     "column_order": 0,
                     "example_values": [
                         194
+                    ],
+                    "contains": [
+                        "logrhythm alarm id"
                     ]
                 },
                 {

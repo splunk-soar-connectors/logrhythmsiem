@@ -145,7 +145,7 @@ class LogrhythmSiemConnector(BaseConnector):
         ret_val, response = self._make_soap_call(action_result, 'GetClassifications')
 
         if (phantom.is_fail(ret_val)):
-            self.save_progress("Test Connectivity Failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress("Test Connectivity Failed")
             return action_result.get_status()
 
         self.save_progress("Test Connectivity Passed")
@@ -384,11 +384,6 @@ class LogrhythmSiemConnector(BaseConnector):
             container['description'] = 'LogRhythm Alarm ingested by Phantom'
             container['source_data_identifier'] = alarm_id
 
-            ret_val, message, container_id = self.save_container(container)
-
-            if phantom.is_fail(ret_val):
-                return action_result.set_status(phantom.APP_ERROR, message)
-
             ret_val, alarm_resp = self._make_soap_call(action_result, 'GetAlarmEventsByID', (alarm_id,))
 
             if phantom.is_fail(ret_val):
@@ -399,7 +394,6 @@ class LogrhythmSiemConnector(BaseConnector):
 
                 artifact = {}
                 artifact['label'] = 'event'
-                artifact['container_id'] = container_id
                 artifact['name'] = event['CommonEventName']
                 artifact['source_data_identifier'] = event['CommonEventID']
 
@@ -414,7 +408,6 @@ class LogrhythmSiemConnector(BaseConnector):
             artifact = {}
             artifact['label'] = 'alarm'
             artifact['name'] = 'Alarm Info'
-            artifact['container_id'] = container_id
             artifact['source_data_identifier'] = alarm_id
             artifact['cef_types'] = {'AlarmID': ['logrhythm alarm id']}
 
@@ -425,7 +418,12 @@ class LogrhythmSiemConnector(BaseConnector):
 
             artifact['cef'] = cef
             artifacts.append(artifact)
-            self.save_artifacts(artifacts)
+            container['artifacts'] = artifacts
+
+            ret_val, message, container_id = self.save_container(container)
+
+            if phantom.is_fail(ret_val):
+                return action_result.set_status(phantom.APP_ERROR, message)
 
         if not self.is_poll_now() and len(alarms) == int(max_alarms):
             self._state['last_time'] = (datetime.strptime(alarms[-1]['AlarmDate'], consts.LOGRHYTHMSIEM_TIME_FORMAT) +
@@ -483,6 +481,8 @@ class LogrhythmSiemConnector(BaseConnector):
             action_result.add_data(response)
             summary = {'num_events': response['EventCount']}
             action_result.update_summary(summary)
+        else:
+            return action_result.set_status(phantom.APP_ERROR, "Could not get alarm: No response from server")
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -566,7 +566,34 @@ if __name__ == '__main__':
 
     import sys
     import pudb
+    import requests
+    import argparse
     pudb.set_trace()
+
+    argparser = argparse.ArgumentParser()
+
+    argparser.add_argument('input_test_json', help='Input Test JSON file')
+    argparser.add_argument('-u', '--username', help='username', required=False)
+    argparser.add_argument('-p', '--password', help='password', required=False)
+
+    args = argparser.parse_args()
+    session_id = None
+
+    if (args.username and args.password):
+        try:
+            print ("Accessing the Login page")
+            r = requests.get("https://127.0.0.1/login", verify=False)
+            csrftoken = r.cookies['csrftoken']
+            data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
+            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': 'https://127.0.0.1/login'}
+
+            print ("Logging into Platform to get the session id")
+            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            session_id = r2.cookies['sessionid']
+
+        except Exception as e:
+            print ("Unable to get session id from the platform. Error: {0}".format(str(e)))
+            exit(1)
 
     if (len(sys.argv) < 2):
         print "No test json specified as input"
@@ -579,6 +606,10 @@ if __name__ == '__main__':
 
         connector = LogrhythmSiemConnector()
         connector.print_progress_message = True
+
+        if (session_id is not None):
+            in_json['user_session_token'] = session_id
+
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print (json.dumps(json.loads(ret_val), indent=4))
 
