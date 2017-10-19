@@ -9,8 +9,8 @@
     "product_version_regex": ".*",
     "publisher": "Phantom",
     "license": "Copyright (c) Phantom Cyber Corporation 2017",
-    "app_version": "1.0.0",
-    "utctime_updated": "2017-06-23T19:27:02.892841Z",
+    "app_version": "1.0.1",
+    "utctime_updated": "2017-10-19T23:17:38.000000Z",
     "package_name": "phantom_logrhythmsiem",
     "main_module": "logrhythmsiem_connector.pyc",
     "min_phantom_version": "3.0.251",
@@ -18,7 +18,8 @@
     "pip_dependencies": {
         "wheel": [
             {
-                "module": "suds", "input_file": "wheels/suds-0.4-cp27-none-any.whl"
+                "module": "suds",
+                "input_file": "wheels/suds-0.4-cp27-none-any.whl"
             }
         ]
     },
@@ -95,14 +96,22 @@
                     "data_type": "numeric",
                     "required": true,
                     "primary": true,
-                    "contains": [ "logrhythm list id" ],
+                    "contains": [
+                        "logrhythm list id"
+                    ],
                     "order": 0
                 },
                 "type": {
                     "description": "Type of list",
                     "data_type": "string",
                     "required": true,
-                    "value_list": [ "General", "Hostname", "IP", "IP Range", "User" ],
+                    "value_list": [
+                        "General",
+                        "Hostname",
+                        "IP",
+                        "IP Range",
+                        "User"
+                    ],
                     "default": "General",
                     "order": 1
                 },
@@ -123,7 +132,9 @@
                 {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
-                    "contains": [ "logrhythm list id" ],
+                    "contains": [
+                        "logrhythm list id"
+                    ],
                     "column_name": "title",
                     "column_order": 0
                 },
@@ -214,7 +225,9 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": [ "logrhythm alarm id" ],
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
                     "order": 0
                 },
                 "status": {
@@ -222,7 +235,12 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "value_list": [ "", "New", "Open", "Closed" ],
+                    "value_list": [
+                        "",
+                        "New",
+                        "Open",
+                        "Closed"
+                    ],
                     "order": 1
                 },
                 "comment": {
@@ -237,7 +255,9 @@
                 {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
-                    "contains": [ "logrhythm alarm id" ]
+                    "contains": [
+                        "logrhythm alarm id"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.status",
@@ -278,7 +298,9 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": [ "logrhythm alarm id" ]
+                    "contains": [
+                        "logrhythm alarm id"
+                    ]
                 }
             },
             "render": {
@@ -426,7 +448,9 @@
                 {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
-                    "contains": [ "logrhythm alarm id" ],
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
                     "example_values": [
                         "194"
                     ]
@@ -467,7 +491,9 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": [ "logrhythm alarm id" ]
+                    "contains": [
+                        "logrhythm alarm id"
+                    ]
                 }
             },
             "render": {
@@ -477,7 +503,9 @@
                 {
                     "data_path": "action_result.data.*.ID",
                     "data_type": "numeric",
-                    "contains": [ "logrhythm alarm id" ],
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
                     "example_values": [
                         194
                     ]
@@ -543,7 +571,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.ProcessID",
                     "data_type": "numeric",
-                    "contains": [ "pid" ],
+                    "contains": [
+                        "pid"
+                    ],
                     "example_values": [
                         -1
                     ]
@@ -614,7 +644,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedPort",
                     "data_type": "numeric",
-                    "contains": [ "port" ],
+                    "contains": [
+                        "port"
+                    ],
                     "example_values": [
                         -1
                     ]
@@ -678,7 +710,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATPort",
                     "data_type": "numeric",
-                    "contains": [ "port" ],
+                    "contains": [
+                        "port"
+                    ],
                     "example_values": [
                         -1
                     ]
@@ -700,7 +734,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.OriginHostName",
                     "data_type": "string",
-                    "contains": [ "host name" ],
+                    "contains": [
+                        "host name"
+                    ],
                     "example_values": [
                         "logr-siem-01"
                     ]
@@ -731,7 +767,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATPort",
                     "data_type": "numeric",
-                    "contains": [ "port" ],
+                    "contains": [
+                        "port"
+                    ],
                     "example_values": [
                         -1
                     ]
@@ -767,7 +805,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostName",
                     "data_type": "string",
-                    "contains": [ "host name" ],
+                    "contains": [
+                        "host name"
+                    ],
                     "example_values": [
                         "logr-siem-01"
                     ]
@@ -803,7 +843,9 @@
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostName",
                     "data_type": "string",
-                    "contains": [ "host name" ],
+                    "contains": [
+                        "host name"
+                    ],
                     "example_values": [
                         "logr-siem-01"
                     ]
@@ -854,7 +896,9 @@
                 {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
-                    "contains": [ "logrhythm alarm id" ],
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
                     "example_values": [
                         "194"
                     ]
@@ -889,8 +933,7 @@
             "description": "List all log managers on the system",
             "type": "investigate",
             "read_only": true,
-            "parameters": {
-            },
+            "parameters": {},
             "render": {
                 "type": "table"
             },
