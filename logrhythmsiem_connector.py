@@ -468,8 +468,12 @@ class LogrhythmSiemConnector(BaseConnector):
 
         ret_val, response = self._make_soap_call(action_result, 'UpdateAlarmStatus', (alarm_id, status, comment))
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return ret_val
+
+        if not response.get('Succeeded'):
+            return action_result.set_status(phantom.APP_ERROR, "There was an error while updating the alarm: {0}"
+                    .format(response.get('Errors', {}).get('ErrorInfo', [{}])[0].get('ErrorMessage', 'Unknown Error')))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully updated alarm")
 
