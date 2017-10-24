@@ -67,6 +67,13 @@ class LogrhythmSiemConnector(BaseConnector):
         self._verify = config['verify_server_cert']
         self._base_url = 'https://{0}/LogRhythm.API/Services/'.format(config['api_ip'])
 
+        self._proxy = {}
+        env_vars = config.get('_reserved_environment_variables', {})
+        if 'HTTP_PROXY' in env_vars:
+            self._proxy['http'] = env_vars['HTTP_PROXY']['value']
+        if 'HTTPS_PROXY' in env_vars:
+            self._proxy['https'] = env_vars['HTTPS_PROXY']['value']
+
         return phantom.APP_SUCCESS
 
     def finalize(self):
@@ -77,13 +84,20 @@ class LogrhythmSiemConnector(BaseConnector):
     def _create_client(self, action_result, wsdl):
 
         try:
+
             if self._verify:
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl))
             else:
                 self._client = Client(url='{0}{1}'.format(self._base_url, wsdl), transport=NoVerifyTransport())
+
             sec = Security()
             sec.tokens.append(UsernameToken(self._username, self._password))
-            self._client.set_options(wsse=sec)
+
+            if self._proxy:
+                self._client.set_options(wsse=sec, proxy=self._proxy)
+            else:
+                self._client.set_options(wsse=sec)
+
         except Exception as e:
             return action_result.set_status(phantom.APP_ERROR, 'Could not connect to the LogRhythm API endpoint', e)
 
