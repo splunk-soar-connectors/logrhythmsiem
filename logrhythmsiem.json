@@ -327,7 +327,8 @@
                     "column_name": "Alarm ID",
                     "column_order": 0,
                     "example_values": [
-                        194
+                        194,
+                        195
                     ],
                     "contains": [
                         "logrhythm alarm id"
@@ -346,7 +347,8 @@
                     "column_name": "Alarm Date",
                     "column_order": 2,
                     "example_values": [
-                        "2017-06-29T03:50:11.000066"
+                        "2017-06-29T03:50:11.000066",
+                        "2017-08-04T18:27:39.000028"
                     ]
                 },
                 {
@@ -369,28 +371,32 @@
                     "data_path": "action_result.data.*.AlarmRuleID",
                     "data_type": "numeric",
                     "example_values": [
-                        677
+                        677,
+                        102
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.AlarmStatus",
                     "data_type": "string",
                     "example_values": [
-                        "Opened"
+                        "Opened",
+                        "Closed"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.DateUpdated",
                     "data_type": "string",
                     "example_values": [
-                        "2017-08-03T19:45:54.000055"
+                        "2017-08-03T19:45:54.000055",
+                        "2017-10-24T22:07:15.000407"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.DateInserted",
                     "data_type": "string",
                     "example_values": [
-                        "2017-06-29T03:50:11.000837"
+                        "2017-06-29T03:50:11.000837",
+                        "2017-08-04T18:27:39.000577"
                     ]
                 },
                 {
@@ -399,14 +405,16 @@
                     "column_name": "Alarm Rule ID",
                     "column_order": 1,
                     "example_values": [
-                        "LogRhythm AI Comm Manager Heartbeat Missed"
+                        "LogRhythm AI Comm Manager Heartbeat Missed",
+                        "LogRhythm Mediator Heartbeat Missed"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.EventDateLast",
                     "data_type": "string",
                     "example_values": [
-                        "2017-06-29T03:50:11.000000"
+                        "2017-06-29T03:50:11.000000",
+                        "2017-08-04T18:27:38.000163"
                     ]
                 },
                 {
@@ -420,7 +428,8 @@
                     "data_path": "action_result.data.*.EventDateFirst",
                     "data_type": "string",
                     "example_values": [
-                        "2017-06-29T03:50:11.000000"
+                        "2017-06-29T03:50:11.000000",
+                        "2017-08-04T18:27:38.000163"
                     ]
                 },
                 {
@@ -442,7 +451,8 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        ""
+                        "",
+                        "Num events: 1"
                     ]
                 },
                 {
@@ -452,7 +462,8 @@
                         "logrhythm alarm id"
                     ],
                     "example_values": [
-                        "194"
+                        "194",
+                        "195"
                     ]
                 },
                 {
@@ -474,6 +485,41 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.Comment",
+                    "data_type": "string",
+                    "example_values": [
+                        "Changed status to: Closed\r\nComment: Automatic commenting is the future"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.PersonID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        14
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.DateInserted",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-10-24T22:07:15.000407"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.PersonName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Soap API User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.ID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        62
                     ]
                 }
             ],

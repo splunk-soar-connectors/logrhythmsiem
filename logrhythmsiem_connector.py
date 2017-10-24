@@ -495,6 +495,13 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
+        ret_val, comments = self._make_soap_call(action_result, 'GetAlarmHistoryByID', (alarm_id, False, True))
+
+        if (phantom.is_fail(ret_val)):
+            return ret_val
+
+        response['Comments'] = comments.get('Comments', {}).get('AlarmCommentDataModel')
+
         if response:
             action_result.add_data(response)
             summary = {'num_events': response['EventCount']}
