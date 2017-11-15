@@ -30,11 +30,11 @@ LOGRHYTHMSIEM_LIST_SERVICE_DICT = {"General": "AddGeneralListItem",
                                    "Known Host": "AddHostListItemKnownHost",
                                    "User": "AddUserListItem"}
 
+# This dictionary maps all possible filters in lowercase to the correct casing expected by the API
 LOGRHYTHMSIEM_FILTER_DICT = {
         "account": "Account",
         "address": "Address",
         "amount": "Amount",
-        "application": "Application",
         "bytesin": "BytesIn",
         "bytesinout": "BytesInOut",
         "bytesout": "BytesOut",
@@ -46,13 +46,11 @@ LOGRHYTHMSIEM_FILTER_DICT = {
         "duration": "Duration",
         "entity": "Entity",
         "group": "Group",
-        "host": "Host",
         "hostname": "HostName",
         "idmgroupforaccount": "IDMGroupForAccount",
         "idmgroupforlogin": "IDMGroupForLogin",
         "idmgroupforuser": "IDMGroupForUser",
         "impactedentity": "ImpactedEntity",
-        "impactedhost": "ImpactedHost",
         "impactedhostname": "ImpactedHostName",
         "impactedinterface": "ImpactedInterface",
         "impactedip": "ImpactedIP",
@@ -94,7 +92,6 @@ LOGRHYTHMSIEM_FILTER_DICT = {
         "objectname": "ObjectName",
         "originentity": "OriginEntity",
         "originentityorimpactedentity": "OriginEntityOrImpactedEntity",
-        "originhost": "OriginHost",
         "originhostname": "OriginHostName",
         "origininterface": "OriginInterface",
         "originip": "OriginIP",
@@ -130,11 +127,12 @@ LOGRHYTHMSIEM_FILTER_DICT = {
         "version": "Version"
     }
 
+
+# This dictionary maps all possible filters in lowercase to the filter type expected by the API
 LOGRHYTHMSIEM_VALUE_TYPE_DICT = {
         "account": "string",
         "address": "string",
         "amount": "quantity",
-        "application": "string",
         "bytesin": "quantity",
         "bytesinout": "quantity",
         "bytesout": "quantity",
@@ -146,13 +144,11 @@ LOGRHYTHMSIEM_VALUE_TYPE_DICT = {
         "duration": "quantity",
         "entity": "integer",
         "group": "string",
-        "host": "string",
         "hostname": "string",
         "idmgroupforaccount": "integer",
         "idmgroupforlogin": "integer",
         "idmgroupforuser": "integer",
         "impactedentity": "integer",
-        "impactedhost": "string",
         "impactedhostname": "string",
         "impactedinterface": "string",
         "impactedip": "ip",
@@ -194,7 +190,6 @@ LOGRHYTHMSIEM_VALUE_TYPE_DICT = {
         "objectname": "string",
         "originentity": "integer",
         "originentityorimpactedentity": "integer",
-        "originhost": "string",
         "originhostname": "string",
         "origininterface": "string",
         "originip": "ip",

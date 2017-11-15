@@ -385,8 +385,6 @@ class LogrhythmSiemConnector(BaseConnector):
 
         ret_val, response = self._make_soap_call(action_result, 'ExecuteQuery', (query_obj,))
 
-        print self._client.last_sent().str()
-
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
 
