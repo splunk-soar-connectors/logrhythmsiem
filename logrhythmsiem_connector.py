@@ -148,6 +148,19 @@ class LogrhythmSiemConnector(BaseConnector):
 
         return sud_obj
 
+    def _validate_int_range(self, v):
+
+        try:
+            v_spl = v.split('-')
+            if len(v_spl) != 2:
+                raise Exception()
+            int(v_spl[0])
+            int(v_spl[1])
+        except:
+            return False
+
+        return True
+
     def _handle_test_connectivity(self, param):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -232,12 +245,12 @@ class LogrhythmSiemConnector(BaseConnector):
         try:
             query_dict = json.loads(param.get('query_dict', '{}'))
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Could not parse JSON form query_dict parameter: {0}".format(e))
+            return action_result.set_status(phantom.APP_ERROR, "Could not parse JSON from query_dict: {0}".format(e))
 
         for k, v in query_dict.iteritems():
 
             if k.lower() not in consts.LOGRHYTHMSIEM_FILTER_DICT:
-                return action_result.set_status(phantom.APP_ERROR, "One of the given query fields, {0}, is not valid.".format(k))
+                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k))
 
             value_type = consts.LOGRHYTHMSIEM_VALUE_TYPE_DICT[k.lower()]
 
@@ -247,13 +260,25 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr = self._client.factory.create('ns1:ArrayOfstring')
                 value_arr.string = [v]
 
-            elif value_type == 'integer' or (value_type == 'port' and ',' in v):
+            elif value_type == 'integer':
+
+                try:
+                    int(v)
+                except:
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer'))
+
                 value_obj = self._client.factory.create('LogQueryFilterValueIntegerDataModel')
                 value_obj.ValueType = 'Integer'
                 value_arr = self._client.factory.create('ns1:ArrayOfint')
                 value_arr.int = [v]
 
             elif value_type == 'long':
+
+                try:
+                    int(v)
+                except:
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'long'))
+
                 value_obj = self._client.factory.create('LogQueryFilterValueBigIntegerDataModel')
                 value_obj.ValueType = 'LongInteger'
                 value_arr = self._client.factory.create('ns1:ArrayOflong')
@@ -265,46 +290,64 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_obj.ValueType = 'Quantity'
                 quantity = self._client.factory.create('LogQueryQuantityValue')
 
-                if ',' in v:
-                    v_spl = v.split(',')
-                    quantity.Value1 = v_spl[0]
-                    quantity.Value2 = v_spl[1]
+                if not isinstance(v, int) and '-' in v:
+
+                    if not self._validate_int_range(v):
+                        return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer range'))
+
+                    v_spl = v.split('-')
+                    quantity.Value1 = v_spl[0].strip()
+                    quantity.Value2 = v_spl[1].strip()
                     quantity.Operation = 'BetweenOrEqual'
 
                 else:
+
+                    try:
+                        int(v)
+                    except:
+                        return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer'))
+
                     quantity.Value1 = v
                     quantity.Operation = 'Equals'
 
                 value_arr = self._client.factory.create('ArrayOfLogQueryQuantityValue')
                 value_arr.LogQueryQuantityValue = [quantity]
 
+            elif value_type == 'ip_range':
+
+                v_spl = v.split('-')
+                if len(v_spl) != 2 or (not phantom.is_ip(v_spl[0]) or not phantom.is_ip(v_spl[1])):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'IP range'))
+
+                ip_range = self._client.factory.create('LogQueryIPRangeValue')
+                ip_range.StartRangeValue = v_spl[0].strip()
+                ip_range.EndRangeValue = v_spl[1].strip()
+
+                value_obj = self._client.factory.create('LogQueryFilterValueIPRangeDataModel')
+                value_obj.ValueType = 'IPAddressRange'
+
+                value_arr = self._client.factory.create('ArrayOfLogQueryIPRangeValue')
+                value_arr.LogQueryIPRangeValue = [ip_range]
+
             elif value_type == 'ip':
 
-                if ',' in v:
+                if not phantom.is_ip(v):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'IP'))
 
-                    v_spl = v.split(',')
-                    ip_range = self._client.factory.create('LogQueryIPRangeValue')
-                    ip_range.StartRangeValue = v_spl[0]
-                    ip_range.EndRangeValue = v_spl[1]
+                value_obj = self._client.factory.create('LogQueryFilterValueIPAddressDataModel')
+                value_obj.ValueType = 'IPAddress'
+                value_arr = self._client.factory.create('ns1:ArrayOfstring')
+                value_arr.string = [v]
 
-                    value_obj = self._client.factory.create('LogQueryFilterValueIPRangeDataModel')
-                    value_obj.ValueType = 'IPAddressRange'
+            elif value_type == 'port_range':
 
-                    value_arr = self._client.factory.create('ArrayOfLogQueryIPRangeValue')
-                    value_arr.LogQueryIPRangeValue = [ip_range]
+                if not self._validate_int_range(v):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'port range'))
 
-                else:
-                    value_obj = self._client.factory.create('LogQueryFilterValueIPAddressDataModel')
-                    value_obj.ValueType = 'IPAddress'
-                    value_arr = self._client.factory.create('ns1:ArrayOfstring')
-                    value_arr.string = [v]
-
-            elif value_type == 'port':
-
-                v_spl = v.split(',')
+                v_spl = v.split('-')
                 port_range = self._client.factory.create('LogQueryPortRangeValue')
-                port_range.StartRangeValue = v_spl[0]
-                port_range.EndRangeValue = v_spl[1]
+                port_range.StartRangeValue = v_spl[0].strip()
+                port_range.EndRangeValue = v_spl[1].strip()
                 port_range.CanEqual = True
 
                 value_obj = self._client.factory.create('LogQueryFilterValuePortRangeDataModel')
@@ -314,7 +357,7 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr.LogQueryPortRangeValue = [port_range]
 
             else:
-                return action_result.set_status(phantom.APP_ERROR, "Could not find correct value type for query field, {0}".format(k))
+                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: Could not find correct value type for query field, {0}".format(k))
 
             value_obj.Value = value_arr
 
@@ -590,10 +633,10 @@ class LogrhythmSiemConnector(BaseConnector):
 if __name__ == '__main__':
 
     import sys
-    import pudb
+    # import pudb
     import requests
     import argparse
-    pudb.set_trace()
+    # pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
 
