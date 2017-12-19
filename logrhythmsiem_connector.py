@@ -543,7 +543,8 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        response['Comments'] = comments.get('Comments', {}).get('AlarmCommentDataModel')
+        if comments:
+            response['Comments'] = comments.get('Comments', {}).get('AlarmCommentDataModel')
 
         if response:
             action_result.add_data(response)
