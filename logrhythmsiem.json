@@ -4,7 +4,8 @@
     "description": "This app supports ingestion and several investigative actions on LogRhythm SIEM",
     "type": "siem",
     "product_vendor": "LogRhythm",
-    "logo": "logrhythm.png",
+    "logo": "logo_logrhythm.svg",
+    "logo_dark": "logo_logrhythm_dark.svg",
     "product_name": "LogRhythm SIEM",
     "product_version_regex": ".*",
     "publisher": "Phantom",
@@ -130,6 +131,18 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.element",
+                    "data_type": "string",
+                    "column_name": "description",
+                    "column_order": 1
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
@@ -139,28 +152,16 @@
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.element",
-                    "data_type": "string",
-                    "column_name": "description",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.parameter.type",
-                    "data_type": "string",
-                    "column_name": "event_id",
-                    "column_order": 2
-                },
-                {
                     "data_path": "action_result.parameter.pattern_match",
                     "data_type": "string",
                     "column_name": "event_id",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.parameter.type",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 3
+                    "column_name": "event_id",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.message",
@@ -253,6 +254,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.comment",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
@@ -261,14 +270,6 @@
                 },
                 {
                     "data_path": "action_result.parameter.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.comment",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
                     "data_type": "string"
                 },
                 {
@@ -308,17 +309,32 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.RBPAvg",
-                    "data_type": "numeric",
+                    "data_path": "action_result.status",
+                    "data_type": "string",
                     "example_values": [
-                        67
+                        "success",
+                        "failed"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.RBPMax",
-                    "data_type": "numeric",
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "string",
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
                     "example_values": [
-                        67
+                        "194",
+                        "195"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmDate",
+                    "data_type": "string",
+                    "column_name": "Alarm Date",
+                    "column_order": 2,
+                    "example_values": [
+                        "2017-06-29T03:50:11.000066",
+                        "2017-08-04T18:27:39.000028"
                     ]
                 },
                 {
@@ -335,20 +351,87 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.AlarmRuleID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        677,
+                        102
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmRuleName",
+                    "data_type": "string",
+                    "column_name": "Alarm Rule ID",
+                    "column_order": 1,
+                    "example_values": [
+                        "LogRhythm AI Comm Manager Heartbeat Missed",
+                        "LogRhythm Mediator Heartbeat Missed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.AlarmStatus",
+                    "data_type": "string",
+                    "example_values": [
+                        "Opened",
+                        "Closed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.Comment",
+                    "data_type": "string",
+                    "example_values": [
+                        "Changed status to: Closed\r\nComment: Automatic commenting is the future"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.DateInserted",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-10-24T22:07:15.000407"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.ID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        62
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.PersonID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        14
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Comments.*.PersonName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Soap API User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.DateInserted",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000837",
+                        "2017-08-04T18:27:39.000577"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.DateUpdated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-08-03T19:45:54.000055",
+                        "2017-10-24T22:07:15.000407"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.EntityID",
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.AlarmDate",
-                    "data_type": "string",
-                    "column_name": "Alarm Date",
-                    "column_order": 2,
-                    "example_values": [
-                        "2017-06-29T03:50:11.000066",
-                        "2017-08-04T18:27:39.000028"
                     ]
                 },
                 {
@@ -368,45 +451,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.AlarmRuleID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        677,
-                        102
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.AlarmStatus",
+                    "data_path": "action_result.data.*.EventDateFirst",
                     "data_type": "string",
                     "example_values": [
-                        "Opened",
-                        "Closed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.DateUpdated",
-                    "data_type": "string",
-                    "example_values": [
-                        "2017-08-03T19:45:54.000055",
-                        "2017-10-24T22:07:15.000407"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.DateInserted",
-                    "data_type": "string",
-                    "example_values": [
-                        "2017-06-29T03:50:11.000837",
-                        "2017-08-04T18:27:39.000577"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.AlarmRuleName",
-                    "data_type": "string",
-                    "column_name": "Alarm Rule ID",
-                    "column_order": 1,
-                    "example_values": [
-                        "LogRhythm AI Comm Manager Heartbeat Missed",
-                        "LogRhythm Mediator Heartbeat Missed"
+                        "2017-06-29T03:50:11.000000",
+                        "2017-08-04T18:27:38.000163"
                     ]
                 },
                 {
@@ -425,14 +474,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.EventDateFirst",
-                    "data_type": "string",
-                    "example_values": [
-                        "2017-06-29T03:50:11.000000",
-                        "2017-08-04T18:27:38.000163"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.LastUpdatedName",
                     "data_type": "string",
                     "example_values": [
@@ -440,11 +481,24 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.RBPAvg",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.RBPMax",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.num_events",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        1
                     ]
                 },
                 {
@@ -453,24 +507,6 @@
                     "example_values": [
                         "",
                         "Num events: 1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.id",
-                    "data_type": "string",
-                    "contains": [
-                        "logrhythm alarm id"
-                    ],
-                    "example_values": [
-                        "194",
-                        "195"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.num_events",
-                    "data_type": "string",
-                    "example_values": [
-                        1
                     ]
                 },
                 {
@@ -485,41 +521,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Comments.*.Comment",
-                    "data_type": "string",
-                    "example_values": [
-                        "Changed status to: Closed\r\nComment: Automatic commenting is the future"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Comments.*.PersonID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        14
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Comments.*.DateInserted",
-                    "data_type": "string",
-                    "example_values": [
-                        "2017-10-24T22:07:15.000407"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Comments.*.PersonName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Soap API User"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Comments.*.ID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        62
                     ]
                 }
             ],
@@ -547,21 +548,85 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.ID",
-                    "data_type": "numeric",
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "string",
                     "contains": [
                         "logrhythm alarm id"
                     ],
                     "example_values": [
-                        194,
-                        195
+                        "194",
+                        "195"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Account",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Amount",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.Bytes",
                     "data_type": "numeric",
                     "example_values": [
                         0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.BytesIn",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.BytesOut",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Error"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationTypeName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Command",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1100403,
+                        -1100001
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventName",
+                    "data_type": "string",
+                    "column_name": "Event Name",
+                    "column_order": 0,
+                    "example_values": [
+                        "LogRhythm AI Comm Manager Heartbeat Missed",
+                        "LogRhythm Mediator Heartbeat Missed"
                     ]
                 },
                 {
@@ -572,28 +637,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogDate",
-                    "data_type": "string",
-                    "column_name": "Log Date",
-                    "column_order": 1,
-                    "example_values": [
-                        "2017-06-29T03:50:11.000000",
-                        "2017-08-04T18:27:38.000163"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.EntityID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Priority",
-                    "data_type": "numeric",
-                    "example_values": [
-                        67
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.DateInserted",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.Direction",
@@ -603,84 +648,104 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.MPERuleID",
-                    "data_type": "numeric",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.DirectionName",
+                    "data_type": "string",
                     "example_values": [
-                        -1
+                        "Local"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProcessID",
-                    "data_type": "numeric",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Domain",
+                    "data_type": "string",
                     "contains": [
-                        "pid"
-                    ],
-                    "example_values": [
-                        -1
+                        "domain"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ServiceID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Duration",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.EntityID",
                     "data_type": "numeric",
                     "example_values": [
                         0
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.NormalDate",
-                    "data_type": "string",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.EntityName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Group",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityID",
+                    "data_type": "numeric",
                     "example_values": [
-                        "2017-06-29T03:50:11.000000",
-                        "2017-08-04T18:27:38.000163"
+                        1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginName",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityName",
                     "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostName",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
                     "example_values": [
                         "logr-siem-01"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginPort",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedIP",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedInterface",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedLocation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedLocationID",
                     "data_type": "numeric",
                     "example_values": [
                         -1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZone",
-                    "data_type": "string",
-                    "example_values": [
-                        "Unknown"
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedMAC",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProtocolID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATIP",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATPort",
                     "data_type": "numeric",
+                    "contains": [
+                        "port"
+                    ],
                     "example_values": [
                         -1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        -1000000
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageType",
-                    "data_type": "string",
-                    "example_values": [
-                        "Event"
                     ]
                 },
                 {
@@ -688,6 +753,17 @@
                     "data_type": "string",
                     "example_values": [
                         "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNetwork",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNetworkID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
                     ]
                 },
                 {
@@ -708,32 +784,63 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginHostID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        -1100403,
-                        -1100001
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.DirectionName",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedZoneName",
                     "data_type": "string",
                     "example_values": [
-                        "Local"
+                        "Internal"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ItemsPacketsIn",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ItemsPacketsOut",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogDate",
+                    "data_type": "string",
+                    "column_name": "Log Date",
+                    "column_order": 1,
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000",
+                        "2017-08-04T18:27:38.000163"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogMessage",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHost",
                     "data_type": "string",
                     "example_values": [
                         "logr-siem-01 *"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostName",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "example_values": [
+                        "logr-siem-01"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1000000
                     ]
                 },
                 {
@@ -751,6 +858,50 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceTypeName",
+                    "data_type": "string",
+                    "example_values": [
+                        "LogRhythm Diagnostics"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Login",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MPERuleID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MPERuleName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.MessageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "Event"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.NormalDate",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-06-29T03:50:11.000000",
+                        "2017-08-04T18:27:38.000163"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.NormalDateMax",
                     "data_type": "string",
                     "example_values": [
@@ -759,24 +910,29 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATPort",
-                    "data_type": "numeric",
-                    "contains": [
-                        "port"
-                    ],
-                    "example_values": [
-                        -1
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Object",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ObjectName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityID",
                     "data_type": "numeric",
                     "example_values": [
                         1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Primary Site"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginHostID",
                     "data_type": "numeric",
                     "example_values": [
                         1
@@ -793,90 +949,16 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZoneName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Internal"
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginIP",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.SequenceNumber",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginInterface",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.CommonEventName",
-                    "data_type": "string",
-                    "column_name": "Event Name",
-                    "column_order": 0,
-                    "example_values": [
-                        "LogRhythm AI Comm Manager Heartbeat Missed",
-                        "LogRhythm Mediator Heartbeat Missed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATPort",
-                    "data_type": "numeric",
-                    "contains": [
-                        "port"
-                    ],
-                    "example_values": [
-                        -1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNetworkID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        -1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        3200
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityID",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedHostName",
-                    "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
-                    "example_values": [
-                        "logr-siem-01"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedZoneName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Internal"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginEntityName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Primary Site"
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLocation",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLocationID",
@@ -886,56 +968,176 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNetworkID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLogin",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginMAC",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATIP",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATPort",
                     "data_type": "numeric",
+                    "contains": [
+                        "port"
+                    ],
                     "example_values": [
                         -1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceHostName",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginName",
                     "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
                     "example_values": [
                         "logr-siem-01"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogSourceTypeName",
-                    "data_type": "string",
-                    "example_values": [
-                        "LogRhythm Diagnostics"
-                    ]
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNetwork",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Error"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedEntityName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Primary Site"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedLocationID",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNetworkID",
                     "data_type": "numeric",
                     "example_values": [
                         -1
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginPort",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZone",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "Unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginZoneName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Internal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        67
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Process",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProcessID",
+                    "data_type": "numeric",
+                    "contains": [
+                        "pid"
+                    ],
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProtocolID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        -1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProtocolName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Quantity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Rate",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Recipient",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Sender",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.SequenceNumber",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ServiceID",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.ServiceName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Session",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Severity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Size",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.URL",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.VendorMsgID",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Events.LogDataModel.*.Version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ID",
+                    "data_type": "numeric",
+                    "contains": [
+                        "logrhythm alarm id"
+                    ],
+                    "example_values": [
+                        194,
+                        195
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.num_events",
+                    "data_type": "string",
+                    "example_values": [
+                        1
                     ]
                 },
                 {
@@ -944,24 +1146,6 @@
                     "example_values": [
                         "",
                         "Num events: 1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.id",
-                    "data_type": "string",
-                    "contains": [
-                        "logrhythm alarm id"
-                    ],
-                    "example_values": [
-                        "194",
-                        "195"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.num_events",
-                    "data_type": "string",
-                    "example_values": [
-                        1
                     ]
                 },
                 {
@@ -977,189 +1161,6 @@
                     "example_values": [
                         1
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedIP",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Severity",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedMAC",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ProtocolName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.BytesIn",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Object",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.VendorMsgID",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Account",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Sender",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ServiceName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.URL",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Amount",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNetwork",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ClassificationTypeName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Subject",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ItemsPacketsOut",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ItemsPacketsIn",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Version",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Command",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedLocation",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Domain",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Group",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.EntityName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Recipient",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.MPERuleName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Quantity",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ObjectName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Process",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNATIP",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.LogMessage",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Size",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginInterface",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginNATIP",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.DateInserted",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.BytesOut",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Session",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedInterface",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginMAC",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLogin",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Login",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginLocation",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.ImpactedNetwork",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.OriginIP",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Rate",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Events.LogDataModel.*.Duration",
-                    "data_type": "string"
                 }
             ],
             "versions": "EQ(*)"
@@ -1175,6 +1176,22 @@
                 "type": "table"
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.HasMoreResults",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
                 {
                     "data_path": "action_result.data.*.List.KeyValuePairOfintstring.*.key",
                     "data_type": "numeric",
@@ -1194,19 +1211,14 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.HasMoreResults",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
+                    "data_path": "action_result.data.*.NextPageID",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.summary.num_managers",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        1
                     ]
                 },
                 {
@@ -1215,13 +1227,6 @@
                     "example_values": [
                         "",
                         "Num managers: 1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.num_managers",
-                    "data_type": "string",
-                    "example_values": [
-                        1
                     ]
                 },
                 {
@@ -1237,10 +1242,6 @@
                     "example_values": [
                         1
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.NextPageID",
-                    "data_type": "string"
                 }
             ],
             "versions": "EQ(*)"
