@@ -135,31 +135,31 @@
                     "contains": [
                         "logrhythm list id"
                     ],
-                    "column_name": "title",
+                    "column_name": "List ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.element",
                     "data_type": "string",
-                    "column_name": "description",
+                    "column_name": "Element",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.parameter.type",
                     "data_type": "string",
-                    "column_name": "event_id",
+                    "column_name": "Data Type",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.parameter.pattern_match",
                     "data_type": "string",
-                    "column_name": "event_id",
+                    "column_name": "Pattern Match",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "column_name": "Status",
                     "column_order": 3
                 },
                 {
