@@ -251,7 +251,8 @@ class LogrhythmSiemConnector(BaseConnector):
         for k, v in query_dict.iteritems():
 
             if k.lower() not in consts.LOGRHYTHMSIEM_FILTER_DICT:
-                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k))
+                msg = "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_type = consts.LOGRHYTHMSIEM_VALUE_TYPE_DICT[k.lower()]
 
@@ -358,7 +359,8 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr.LogQueryPortRangeValue = [port_range]
 
             else:
-                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: Could not find correct value type for query field, {0}".format(k))
+                msg = "Error in query_dict: Could not find correct value type for query field, {0}".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_obj.Value = value_arr
 
@@ -414,7 +416,8 @@ class LogrhythmSiemConnector(BaseConnector):
         elif self._state.get('first_run', True):
             self._state['first_run'] = False
             max_alarms = config['max_alarms']
-            start_time = (datetime.utcnow() - timedelta(days=int(config['first_scheduled_ingestion_span']))).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
+            first_scheduled_ingestion_span_int = int(config['first_scheduled_ingestion_span'])
+            start_time = (datetime.utcnow() - timedelta(days=first_scheduled_ingestion_span_int)).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
             self._state['last_time'] = datetime.utcnow().strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
         else:
             max_alarms = config['max_alarms']
