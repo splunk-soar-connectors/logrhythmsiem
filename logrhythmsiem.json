@@ -8,13 +8,15 @@
     "logo_dark": "logo_logrhythm_dark.svg",
     "product_name": "LogRhythm SIEM",
     "product_version_regex": ".*",
-    "publisher": "Phantom",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2017-2018",
-    "app_version": "1.0.16",
+    "publisher": "Splunk Community",
+    "license": "Copyright (c) 2017-2022 Splunk Inc.",
+    "app_version": "2.0.0",
     "utctime_updated": "2022-01-07T21:34:57.000000Z",
     "package_name": "phantom_logrhythmsiem",
-    "main_module": "logrhythmsiem_connector.pyc",
-    "min_phantom_version": "3.0.251",
+    "main_module": "logrhythmsiem_connector.py",
+    "min_phantom_version": "5.2.0",
+    "fips_compliant": false,
+    "python_version": "2.7",
     "app_wizard_version": "1.0.0",
     "pip_dependencies": {
         "wheel": [
@@ -54,7 +56,6 @@
         "verify_server_cert": {
             "description": "Verify server certificate",
             "data_type": "boolean",
-            "required": true,
             "default": false,
             "order": 1
         },
@@ -97,7 +98,6 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -181,7 +181,11 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "Status",
-                    "column_order": 3
+                    "column_order": 3,
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.message",
@@ -213,7 +217,6 @@
                     "description": "Start Date (YYYY-MM-DDThh:mm:ss)",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
                     "default": "2017-08-01T09:00:00",
                     "order": 0
                 },
@@ -221,22 +224,18 @@
                     "description": "End Date (YYYY-MM-DDThh:mm:ss)",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
                     "default": "2017-08-30T09:00:00",
                     "order": 1
                 },
                 "query_dict": {
                     "description": "Query Dictionary",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 2
                 },
                 "max_events": {
                     "description": "Max Events to Query",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
                     "default": 1,
                     "order": 3
                 }
@@ -974,7 +973,6 @@
             "action": "on poll",
             "identifier": "on_poll",
             "description": "Ingest alarms from LogRhythm",
-            "verbose": "",
             "type": "ingest",
             "read_only": true,
             "parameters": {
@@ -991,7 +989,7 @@
                     "data_type": "numeric"
                 },
                 "container_count": {
-                    "description": "Maximum number of container records to query for.",
+                    "description": "Maximum number of container records to query for",
                     "data_type": "numeric"
                 },
                 "artifact_count": {
@@ -1006,7 +1004,6 @@
             "action": "update alarm",
             "identifier": "update_alarm",
             "description": "Update an alarm",
-            "verbose": "",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -1023,8 +1020,6 @@
                 "status": {
                     "description": "New status for the alarm",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "value_list": [
                         "",
                         "New",
@@ -1036,8 +1031,6 @@
                 "comment": {
                     "description": "New comment to add to alarm",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 2
                 }
             },
@@ -1059,7 +1052,11 @@
                 },
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.message",
@@ -1241,7 +1238,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Num events: 1"
                     ]
                 },
@@ -1725,7 +1721,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Num events: 1"
                     ]
                 },
@@ -1989,7 +1984,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "",
                         "Num managers: 1"
                     ]
                 },
