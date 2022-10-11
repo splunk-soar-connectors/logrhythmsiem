@@ -14,7 +14,7 @@
     "utctime_updated": "2022-01-07T21:34:57.000000Z",
     "package_name": "phantom_logrhythmsiem",
     "main_module": "logrhythmsiem_connector.py",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "5.3.0",
     "fips_compliant": false,
     "python_version": "2.7",
     "app_wizard_version": "1.0.0",
