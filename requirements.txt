@@ -1,2 +1,2 @@
 requests==2.25.0
-suds
+suds==0.4
