@@ -14,7 +14,6 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
 import json
 import ssl
 from datetime import datetime, timedelta
