@@ -38,7 +38,7 @@ class RetVal(tuple):
 class NoVerifyTransport(HttpAuthenticated):
     def u2handlers(self):
         handlers = HttpAuthenticated.u2handlers(self)
-        context = ssl._create_unverified_context()
+        context = ssl._create_unverified_context()  # nosemgrep
         handlers.append(HTTPSHandler(context=context))
         return handlers
 
