@@ -1,33 +1,33 @@
-# --
 # File: logrhythmsiem_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2017-2018
+# Copyright (c) 2017-2022 Splunk Inc.
 #
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# --
-
-# Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-import logrhythmsiem_consts as consts
-
-import ssl
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 import json
-from datetime import datetime
-from datetime import timedelta
+import ssl
+from datetime import datetime, timedelta
+
+import phantom.app as phantom
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 from suds.client import Client
 from suds.sudsobject import asdict
-from suds.wsse import UsernameToken, Security
 from suds.transport.https import HttpAuthenticated
+from suds.wsse import Security, UsernameToken
 from urllib2 import HTTPSHandler
+
+import logrhythmsiem_consts as consts
 
 
 class RetVal(tuple):
@@ -38,7 +38,7 @@ class RetVal(tuple):
 class NoVerifyTransport(HttpAuthenticated):
     def u2handlers(self):
         handlers = HttpAuthenticated.u2handlers(self)
-        context = ssl._create_unverified_context()
+        context = ssl._create_unverified_context()  # nosemgrep
         handlers.append(HTTPSHandler(context=context))
         return handlers
 
@@ -148,6 +148,19 @@ class LogrhythmSiemConnector(BaseConnector):
 
         return sud_obj
 
+    def _validate_int_range(self, v):
+
+        try:
+            v_spl = v.split('-')
+            if len(v_spl) != 2:
+                raise Exception()
+            int(v_spl[0])
+            int(v_spl[1])
+        except:
+            return False
+
+        return True
+
     def _handle_test_connectivity(self, param):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -232,12 +245,13 @@ class LogrhythmSiemConnector(BaseConnector):
         try:
             query_dict = json.loads(param.get('query_dict', '{}'))
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Could not parse JSON form query_dict parameter: {0}".format(e))
+            return action_result.set_status(phantom.APP_ERROR, "Could not parse JSON from query_dict: {0}".format(e))
 
         for k, v in query_dict.iteritems():
 
             if k.lower() not in consts.LOGRHYTHMSIEM_FILTER_DICT:
-                return action_result.set_status(phantom.APP_ERROR, "One of the given query fields, {0}, is not valid.".format(k))
+                msg = "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_type = consts.LOGRHYTHMSIEM_VALUE_TYPE_DICT[k.lower()]
 
@@ -247,13 +261,25 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr = self._client.factory.create('ns1:ArrayOfstring')
                 value_arr.string = [v]
 
-            elif value_type == 'integer' or (value_type == 'port' and ',' in v):
+            elif value_type == 'integer':
+
+                try:
+                    int(v)
+                except:
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer'))
+
                 value_obj = self._client.factory.create('LogQueryFilterValueIntegerDataModel')
                 value_obj.ValueType = 'Integer'
                 value_arr = self._client.factory.create('ns1:ArrayOfint')
                 value_arr.int = [v]
 
             elif value_type == 'long':
+
+                try:
+                    int(v)
+                except:
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'long'))
+
                 value_obj = self._client.factory.create('LogQueryFilterValueBigIntegerDataModel')
                 value_obj.ValueType = 'LongInteger'
                 value_arr = self._client.factory.create('ns1:ArrayOflong')
@@ -265,46 +291,64 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_obj.ValueType = 'Quantity'
                 quantity = self._client.factory.create('LogQueryQuantityValue')
 
-                if ',' in v:
-                    v_spl = v.split(',')
-                    quantity.Value1 = v_spl[0]
-                    quantity.Value2 = v_spl[1]
+                if not isinstance(v, int) and '-' in v:
+
+                    if not self._validate_int_range(v):
+                        return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer range'))
+
+                    v_spl = v.split('-')
+                    quantity.Value1 = v_spl[0].strip()
+                    quantity.Value2 = v_spl[1].strip()
                     quantity.Operation = 'BetweenOrEqual'
 
                 else:
+
+                    try:
+                        int(v)
+                    except:
+                        return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'integer'))
+
                     quantity.Value1 = v
                     quantity.Operation = 'Equals'
 
                 value_arr = self._client.factory.create('ArrayOfLogQueryQuantityValue')
                 value_arr.LogQueryQuantityValue = [quantity]
 
+            elif value_type == 'ip_range':
+
+                v_spl = v.split('-')
+                if len(v_spl) != 2 or (not phantom.is_ip(v_spl[0]) or not phantom.is_ip(v_spl[1])):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'IP range'))
+
+                ip_range = self._client.factory.create('LogQueryIPRangeValue')
+                ip_range.StartRangeValue = v_spl[0].strip()
+                ip_range.EndRangeValue = v_spl[1].strip()
+
+                value_obj = self._client.factory.create('LogQueryFilterValueIPRangeDataModel')
+                value_obj.ValueType = 'IPAddressRange'
+
+                value_arr = self._client.factory.create('ArrayOfLogQueryIPRangeValue')
+                value_arr.LogQueryIPRangeValue = [ip_range]
+
             elif value_type == 'ip':
 
-                if ',' in v:
+                if not phantom.is_ip(v):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'IP'))
 
-                    v_spl = v.split(',')
-                    ip_range = self._client.factory.create('LogQueryIPRangeValue')
-                    ip_range.StartRangeValue = v_spl[0]
-                    ip_range.EndRangeValue = v_spl[1]
+                value_obj = self._client.factory.create('LogQueryFilterValueIPAddressDataModel')
+                value_obj.ValueType = 'IPAddress'
+                value_arr = self._client.factory.create('ns1:ArrayOfstring')
+                value_arr.string = [v]
 
-                    value_obj = self._client.factory.create('LogQueryFilterValueIPRangeDataModel')
-                    value_obj.ValueType = 'IPAddressRange'
+            elif value_type == 'port_range':
 
-                    value_arr = self._client.factory.create('ArrayOfLogQueryIPRangeValue')
-                    value_arr.LogQueryIPRangeValue = [ip_range]
+                if not self._validate_int_range(v):
+                    return action_result.set_status(phantom.APP_ERROR, consts.LOGRHYTHMSIEM_ERR_QUERY_DICT.format(k, 'port range'))
 
-                else:
-                    value_obj = self._client.factory.create('LogQueryFilterValueIPAddressDataModel')
-                    value_obj.ValueType = 'IPAddress'
-                    value_arr = self._client.factory.create('ns1:ArrayOfstring')
-                    value_arr.string = [v]
-
-            elif value_type == 'port':
-
-                v_spl = v.split(',')
+                v_spl = v.split('-')
                 port_range = self._client.factory.create('LogQueryPortRangeValue')
-                port_range.StartRangeValue = v_spl[0]
-                port_range.EndRangeValue = v_spl[1]
+                port_range.StartRangeValue = v_spl[0].strip()
+                port_range.EndRangeValue = v_spl[1].strip()
                 port_range.CanEqual = True
 
                 value_obj = self._client.factory.create('LogQueryFilterValuePortRangeDataModel')
@@ -314,7 +358,8 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr.LogQueryPortRangeValue = [port_range]
 
             else:
-                return action_result.set_status(phantom.APP_ERROR, "Could not find correct value type for query field, {0}".format(k))
+                msg = "Error in query_dict: Could not find correct value type for query field, {0}".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_obj.Value = value_arr
 
@@ -370,7 +415,8 @@ class LogrhythmSiemConnector(BaseConnector):
         elif self._state.get('first_run', True):
             self._state['first_run'] = False
             max_alarms = config['max_alarms']
-            start_time = (datetime.utcnow() - timedelta(days=int(config['first_scheduled_ingestion_span']))).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
+            first_scheduled_ingestion_span_int = int(config['first_scheduled_ingestion_span'])
+            start_time = (datetime.utcnow() - timedelta(days=first_scheduled_ingestion_span_int)).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
             self._state['last_time'] = datetime.utcnow().strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
         else:
             max_alarms = config['max_alarms']
@@ -500,7 +546,8 @@ class LogrhythmSiemConnector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return ret_val
 
-        response['Comments'] = comments.get('Comments', {}).get('AlarmCommentDataModel')
+        if comments:
+            response['Comments'] = comments.get('Comments', {}).get('AlarmCommentDataModel')
 
         if response:
             action_result.add_data(response)
@@ -589,40 +636,46 @@ class LogrhythmSiemConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import sys
-    import pudb
-    import requests
     import argparse
-    pudb.set_trace()
+    import sys
+
+    # import pudb
+    import requests
+
+    # pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
 
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
+    verify = args.verify
 
     if (args.username and args.password):
         try:
-            print ("Accessing the Login page")
-            r = requests.get("https://127.0.0.1/login", verify=False)
+            print("Accessing the Login page")
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r = requests.get(login_url, verify=verify, timeout=60)
             csrftoken = r.cookies['csrftoken']
             data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
-            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': 'https://127.0.0.1/login'}
+            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
 
-            print ("Logging into Platform to get the session id")
-            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            print("Logging into Platform to get the session id")
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r2 = requests.post(login_url, data=data, headers=headers, verify=verify, timeout=60)
             session_id = r2.cookies['sessionid']
 
         except Exception as e:
-            print ("Unable to get session id from the platform. Error: {0}".format(str(e)))
-            exit(1)
+            print("Unable to get session id from the platform. Error: {0}".format(str(e)))
+            sys.exit(1)
 
     if (len(sys.argv) < 2):
-        print "No test json specified as input"
-        exit(0)
+        print("No test json specified as input")
+        sys.exit(0)
 
     with open(sys.argv[1]) as f:
         in_json = f.read()
@@ -636,6 +689,6 @@ if __name__ == '__main__':
             in_json['user_session_token'] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)

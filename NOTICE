@@ -1,0 +1,14 @@
+Splunk SOAR LogRhythm SIEM
+Copyright (c) 2017-2022 Splunk Inc.
+
+Third-party Software Attributions:
+
+Library: requests
+Version: 2.25.0
+License: Apache 2.0
+Kenneth Reitz
+
+Library: suds
+Version: 1.0.0
+License: LGPL 3.0
+Unknown copyright
