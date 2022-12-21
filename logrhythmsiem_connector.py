@@ -1,6 +1,6 @@
 # File: logrhythmsiem_connector.py
 #
-# Copyright (c) 2017-2018 Splunk Inc.
+# Copyright (c) 2017-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-import logrhythmsiem_consts as consts
-
-import ssl
 import json
-from datetime import datetime
-from datetime import timedelta
+import ssl
+from datetime import datetime, timedelta
+
+import phantom.app as phantom
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 from suds.client import Client
 from suds.sudsobject import asdict
-from suds.wsse import UsernameToken, Security
 from suds.transport.https import HttpAuthenticated
+from suds.wsse import Security, UsernameToken
 from urllib2 import HTTPSHandler
+
+import logrhythmsiem_consts as consts
 
 
 class RetVal(tuple):
@@ -252,7 +250,8 @@ class LogrhythmSiemConnector(BaseConnector):
         for k, v in query_dict.iteritems():
 
             if k.lower() not in consts.LOGRHYTHMSIEM_FILTER_DICT:
-                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k))
+                msg = "Error in query_dict: One of the given query fields, {0}, is not valid.".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_type = consts.LOGRHYTHMSIEM_VALUE_TYPE_DICT[k.lower()]
 
@@ -359,7 +358,8 @@ class LogrhythmSiemConnector(BaseConnector):
                 value_arr.LogQueryPortRangeValue = [port_range]
 
             else:
-                return action_result.set_status(phantom.APP_ERROR, "Error in query_dict: Could not find correct value type for query field, {0}".format(k))
+                msg = "Error in query_dict: Could not find correct value type for query field, {0}".format(k)
+                return action_result.set_status(phantom.APP_ERROR, msg)
 
             value_obj.Value = value_arr
 
@@ -415,7 +415,8 @@ class LogrhythmSiemConnector(BaseConnector):
         elif self._state.get('first_run', True):
             self._state['first_run'] = False
             max_alarms = config['max_alarms']
-            start_time = (datetime.utcnow() - timedelta(days=int(config['first_scheduled_ingestion_span']))).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
+            first_scheduled_ingestion_span_int = int(config['first_scheduled_ingestion_span'])
+            start_time = (datetime.utcnow() - timedelta(days=first_scheduled_ingestion_span_int)).strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
             self._state['last_time'] = datetime.utcnow().strftime(consts.LOGRHYTHMSIEM_TIME_FORMAT)
         else:
             max_alarms = config['max_alarms']
@@ -635,10 +636,12 @@ class LogrhythmSiemConnector(BaseConnector):
 
 if __name__ == '__main__':
 
+    import argparse
     import sys
+
     # import pudb
     import requests
-    import argparse
+
     # pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
@@ -646,29 +649,33 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
+    verify = args.verify
 
     if (args.username and args.password):
         try:
-            print ("Accessing the Login page")
-            r = requests.get("https://127.0.0.1/login", verify=False)
+            print("Accessing the Login page")
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r = requests.get(login_url, verify=verify, timeout=60)
             csrftoken = r.cookies['csrftoken']
             data = {'username': args.username, 'password': args.password, 'csrfmiddlewaretoken': csrftoken}
-            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': 'https://127.0.0.1/login'}
+            headers = {'Cookie': 'csrftoken={0}'.format(csrftoken), 'Referer': login_url}
 
-            print ("Logging into Platform to get the session id")
-            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            print("Logging into Platform to get the session id")
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r2 = requests.post(login_url, data=data, headers=headers, verify=verify, timeout=60)
             session_id = r2.cookies['sessionid']
 
         except Exception as e:
-            print ("Unable to get session id from the platform. Error: {0}".format(str(e)))
-            exit(1)
+            print("Unable to get session id from the platform. Error: {0}".format(str(e)))
+            sys.exit(1)
 
     if (len(sys.argv) < 2):
-        print "No test json specified as input"
-        exit(0)
+        print("No test json specified as input")
+        sys.exit(0)
 
     with open(sys.argv[1]) as f:
         in_json = f.read()
@@ -682,6 +689,6 @@ if __name__ == '__main__':
             in_json['user_session_token'] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
